@@ -1,50 +1,194 @@
+#include <fstream>
 #include <iostream>
-#include <array>
+#include <vector>
+
+
+class Tranzactie {
+    int suma;
+    std::string data;
+    std::string buyIBAN;
+    std::string sellIBAN;
+
+    public:
+     Tranzactie(const int &sum, const std::string &data, const std::string &buyIBAN, const std::string &sellIBAN ) {
+         suma = sum;
+         this->data = data;
+         this->buyIBAN = buyIBAN;
+         this->sellIBAN = sellIBAN;
+     }
+    Tranzactie( const Tranzactie &tr ) {
+         suma = tr.suma;
+         data = tr.data;
+         buyIBAN = tr.buyIBAN;
+         sellIBAN = tr.sellIBAN;
+     }
+
+    Tranzactie &operator=(const Tranzactie &tr) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {
+        return os << tr.data<< " "<<tr.buyIBAN<< " "<< tr.sellIBAN;
+    }
+
+    ~Tranzactie() = default;
+
+
+
+};
+
+
+class Cont {
+int suma;
+std::string IBAN;
+std::vector<Tranzactie> tranzactii;
+    public:
+    explicit Cont(const int &suma , const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
+        this->suma = suma; this->IBAN = IBAN;this->tranzactii = tranzactii;
+    }
+
+    Cont(const Cont &other) {
+        suma = other.suma;
+        IBAN = other.IBAN;
+        tranzactii = other.tranzactii;
+    }
+
+    Cont &operator=(const Cont &other) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Cont &cont)  {
+        os << cont.suma << " " << cont.IBAN<< " \n";
+        for (const auto &tr : cont.tranzactii) {
+            os << tr << " " << "\n";
+        }
+        return os;
+    }
+
+    ~Cont() = default;
+
+    std::string getIBAN() {
+        return IBAN;
+    }
+
+
+
+};
+
+class Client {
+    std::string nume;
+    std::string prenume;
+    std::string CNP;
+    std::vector<Cont> conturi;
+    public:
+    explicit Client(const std::string &nume, const std::string &prenume, const std::string &CNP, const std::vector<Cont> &conturi) {
+        this->nume = nume;
+        this->prenume = prenume;
+        this->CNP = CNP;
+        this->conturi = conturi;
+    }
+
+    Client(const Client &other) {
+        this->nume = other.nume;
+        this->prenume = other.prenume;
+        this->CNP = other.CNP;
+        this->conturi = other.conturi;
+    }
+    Client &operator=(const Client &other) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Client& c)  {
+        os << c.nume << " " << c.prenume << " " << c.CNP << " ";
+        os << "Conturi:\n";
+        for (const auto &cont : c.conturi) {
+            os << cont << "\n";
+        }
+        return os;
+
+    }
+
+    ~Client() = default;
+};
+
+class Banca {
+    std::vector<Client> clienti;
+    std::string nume;
+
+public:
+    explicit Banca(const std::string &nume, const std::vector<Client> &clienti) {
+        this->nume = nume;
+        this->clienti = clienti;
+    }
+
+    Banca(const Banca &other) {
+        this->nume = other.nume;
+        this->clienti = other.clienti;
+    }
+    Banca &operator=(const Banca &other) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Banca &banca) {
+        os << banca.nume << " " << std::endl;
+        for (const auto &cont : banca.clienti) {
+            os << cont << "\n";
+        }
+        return os;
+    }
+    ~Banca() = default;
+
+
+};
+
+
 
 int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+    std::ifstream fin("tastatura.txt");
+    if (!fin) {
+        std::cerr << "Nu s-a putut deschide fisierul tastatura.txt\n";
+        return 1;
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
+
+    std::string numeBanca;
+    fin >> std::ws; // elimină spațiile inițiale
+    std::getline(fin, numeBanca);
+
+    int nrClienti;
+    fin >> nrClienti;
+
+    std::vector<Client> clienti;
+
+    for (int i = 0; i < nrClienti; i++) {
+        std::string nume, prenume, CNP;
+        fin >> nume >> prenume >> CNP;
+
+        int nrConturi;
+        fin >> nrConturi;
+
+        std::vector<Cont> conturi;
+
+        for (int j = 0; j < nrConturi; j++) {
+            int suma;
+            std::string IBAN;
+            fin >> suma >> IBAN;
+
+            int nrTranzactii;
+            fin >> nrTranzactii;
+
+            std::vector<Tranzactie> tranzactii;
+
+            for (int k = 0; k < nrTranzactii; k++) {
+                int sumaTr;
+                std::string data, buyIBAN, sellIBAN;
+                fin >> sumaTr >> data >> buyIBAN >> sellIBAN;
+                tranzactii.emplace_back(sumaTr, data, buyIBAN, sellIBAN);
+            }
+
+            conturi.emplace_back(suma, IBAN, tranzactii);
+        }
+
+        clienti.emplace_back(nume, prenume, CNP, conturi);
     }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
+
+    // Creăm banca cu datele citite
+    Banca banca(numeBanca, clienti);
+
+    // Afișăm tot ce am citit
+    std::cout << banca << std::endl;
+
+    fin.close();
     return 0;
 }
