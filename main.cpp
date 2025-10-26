@@ -17,12 +17,7 @@ public:
         this->sellIBAN = sellIBAN;
     }
 
-    Tranzactie(const Tranzactie &tr) {
-        suma = tr.suma;
-        data = tr.data;
-        buyIBAN = tr.buyIBAN;
-        sellIBAN = tr.sellIBAN;
-    }
+    Tranzactie(const Tranzactie &tr) = default;
 
     Tranzactie &operator=(const Tranzactie &tr) = default;
 
@@ -46,11 +41,7 @@ public:
         this->tranzactii = tranzactii;
     }
 
-    Cont(const Cont &other) {
-        suma = other.suma;
-        IBAN = other.IBAN;
-        tranzactii = other.tranzactii;
-    }
+    Cont(const Cont &other) = default;
 
     Cont &operator=(const Cont &other) = default;
 
@@ -64,7 +55,7 @@ public:
 
     ~Cont() = default;
 
-    std::string getIBAN() {
+    [[nodiscard]] const std::string &getIBAN() const {
         return IBAN;
     }
 };
