@@ -9,8 +9,7 @@ class Moneda {
     std::string nume;
     double cursValutar; // fata de RON
 
-    public:
-
+public:
     Moneda(const std::string &cod, const std::string &nume, const double &cursValutar) {
         this->cod = cod;
         this->nume = nume;
@@ -18,15 +17,17 @@ class Moneda {
     }
 
     Moneda(const Moneda &other) = default;
+
     Moneda &operator=(const Moneda &other) = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Moneda &moneda) {
         os << moneda.cod << " " << moneda.nume << " " << moneda.cursValutar;
         return os;
     }
-    const std::string& getCod() const { return cod; }
-    ~Moneda() = default;
 
+    const std::string &getCod() const { return cod; }
+
+    ~Moneda() = default;
 };
 
 class Card {
@@ -37,25 +38,27 @@ class Card {
     Moneda moneda;
 
 public:
-    Card(const double &suma ,const std::string &titular, const std::string &numarExp, const std::string &nrCard, const Moneda &moneda) : moneda(moneda){
+    Card(const double &suma, const std::string &titular, const std::string &numarExp, const std::string &nrCard,
+         const Moneda &moneda) : moneda(moneda) {
         this->suma = suma;
         this->titular = titular;
         this->numarExp = numarExp;
         this->nrCard = nrCard;
     }
+
     Card(const Card &other) = default;
 
     Card &operator=(const Card &other) = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Card &card) {
-        os << card.titular << " " << card.numarExp << " " << card.nrCard << " " << " \n "<< card.moneda; ;
+        os << card.titular << " " << card.numarExp << " " << card.nrCard << " " << " \n " << card.moneda;;
         return os;
     }
+
     double getSuma() const { return suma; }
-    const Moneda& getMoneda() const { return moneda; }
+    const Moneda &getMoneda() const { return moneda; }
 
     ~Card() = default;
-
 };
 
 class Tranzactie {
@@ -91,7 +94,8 @@ class Cont {
     std::vector<Tranzactie> tranzactii;
 
 public:
-    explicit Cont(const std::vector<Card> &carduri, const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
+    explicit Cont(const std::vector<Card> &carduri, const std::string &IBAN,
+                  const std::vector<Tranzactie> &tranzactii) {
         this->carduri = carduri;
         this->IBAN = IBAN;
         this->tranzactii = tranzactii;
@@ -104,8 +108,8 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Cont &cont) {
         os << cont.IBAN << " \n";
 
-        for (const auto &card : cont.carduri) {
-            os<< card << " " ;
+        for (const auto &card: cont.carduri) {
+            os << card << " ";
         }
         os << " \n ";
 
@@ -115,10 +119,11 @@ public:
         return os;
     }
 
-    double getSumaByMoneda(const std::string &codMoneda) const {
+    double getSumByCurr(const std::string &codMoneda) const {
         double total = 0.0;
-        for (const auto &card : carduri) {
-            if (card.getMoneda().getCod() == codMoneda) { // folosim codul monedei
+        for (const auto &card: carduri) {
+            if (card.getMoneda().getCod() == codMoneda) {
+                // folosim codul monedei
                 total += card.getSuma();
             }
         }
@@ -164,6 +169,9 @@ public:
         }
         return os;
     }
+    [[nodiscard]] const std::vector<Cont>& getConturi() const {
+        return conturi;
+    }
 
     ~Client() = default;
 };
@@ -204,11 +212,9 @@ int main() {
         return 1;
     }
 
-
     std::string numeBanca;
     fin >> std::ws;
     std::getline(fin, numeBanca);
-
 
     int nrClienti;
     fin >> nrClienti;
@@ -263,7 +269,19 @@ int main() {
 
     std::cout << banca << std::endl;
 
+    std::cout << "Total pe valuta\n";
+    for (const auto &client : clienti) {
+        for (const auto &cont : client.getConturi()) {
+            double totalRON = cont.getSumByCurr("RON");
+            double totalEUR = cont.getSumByCurr("EUR");
+
+            std::cout << " Total RON: " << totalRON << "\n";
+            std::cout << " Total EUR: " << totalEUR << "\n";
+        }
+    }
+
     fin.close();
     return 0;
 }
+
 
