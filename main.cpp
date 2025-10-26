@@ -9,40 +9,41 @@ class Tranzactie {
     std::string buyIBAN;
     std::string sellIBAN;
 
-    public:
-     Tranzactie(const int &sum, const std::string &data, const std::string &buyIBAN, const std::string &sellIBAN ) {
-         suma = sum;
-         this->data = data;
-         this->buyIBAN = buyIBAN;
-         this->sellIBAN = sellIBAN;
-     }
-    Tranzactie( const Tranzactie &tr ) {
-         suma = tr.suma;
-         data = tr.data;
-         buyIBAN = tr.buyIBAN;
-         sellIBAN = tr.sellIBAN;
-     }
+public:
+    Tranzactie(const int &sum, const std::string &data, const std::string &buyIBAN, const std::string &sellIBAN) {
+        suma = sum;
+        this->data = data;
+        this->buyIBAN = buyIBAN;
+        this->sellIBAN = sellIBAN;
+    }
+
+    Tranzactie(const Tranzactie &tr) {
+        suma = tr.suma;
+        data = tr.data;
+        buyIBAN = tr.buyIBAN;
+        sellIBAN = tr.sellIBAN;
+    }
 
     Tranzactie &operator=(const Tranzactie &tr) = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {
-        return os << tr.data<< " "<<tr.buyIBAN<< " "<< tr.sellIBAN;
+        return os << tr.data << " " << tr.buyIBAN << " " << tr.sellIBAN;
     }
 
     ~Tranzactie() = default;
-
-
-
 };
 
 
 class Cont {
-int suma;
-std::string IBAN;
-std::vector<Tranzactie> tranzactii;
-    public:
-    explicit Cont(const int &suma , const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
-        this->suma = suma; this->IBAN = IBAN;this->tranzactii = tranzactii;
+    int suma;
+    std::string IBAN;
+    std::vector<Tranzactie> tranzactii;
+
+public:
+    explicit Cont(const int &suma, const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
+        this->suma = suma;
+        this->IBAN = IBAN;
+        this->tranzactii = tranzactii;
     }
 
     Cont(const Cont &other) {
@@ -53,9 +54,9 @@ std::vector<Tranzactie> tranzactii;
 
     Cont &operator=(const Cont &other) = default;
 
-    friend std::ostream &operator<<(std::ostream &os, const Cont &cont)  {
-        os << cont.suma << " " << cont.IBAN<< " \n";
-        for (const auto &tr : cont.tranzactii) {
+    friend std::ostream &operator<<(std::ostream &os, const Cont &cont) {
+        os << cont.suma << " " << cont.IBAN << " \n";
+        for (const auto &tr: cont.tranzactii) {
             os << tr << " " << "\n";
         }
         return os;
@@ -66,9 +67,6 @@ std::vector<Tranzactie> tranzactii;
     std::string getIBAN() {
         return IBAN;
     }
-
-
-
 };
 
 class Client {
@@ -76,8 +74,10 @@ class Client {
     std::string prenume;
     std::string CNP;
     std::vector<Cont> conturi;
-    public:
-    explicit Client(const std::string &nume, const std::string &prenume, const std::string &CNP, const std::vector<Cont> &conturi) {
+
+public:
+    explicit Client(const std::string &nume, const std::string &prenume, const std::string &CNP,
+                    const std::vector<Cont> &conturi) {
         this->nume = nume;
         this->prenume = prenume;
         this->CNP = CNP;
@@ -90,16 +90,16 @@ class Client {
         this->CNP = other.CNP;
         this->conturi = other.conturi;
     }
+
     Client &operator=(const Client &other) = default;
 
-    friend std::ostream &operator<<(std::ostream &os, const Client& c)  {
+    friend std::ostream &operator<<(std::ostream &os, const Client &c) {
         os << c.nume << " " << c.prenume << " " << c.CNP << " ";
         os << "Conturi:\n";
-        for (const auto &cont : c.conturi) {
+        for (const auto &cont: c.conturi) {
             os << cont << "\n";
         }
         return os;
-
     }
 
     ~Client() = default;
@@ -119,20 +119,19 @@ public:
         this->nume = other.nume;
         this->clienti = other.clienti;
     }
+
     Banca &operator=(const Banca &other) = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Banca &banca) {
         os << banca.nume << " " << std::endl;
-        for (const auto &cont : banca.clienti) {
+        for (const auto &cont: banca.clienti) {
             os << cont << "\n";
         }
         return os;
     }
+
     ~Banca() = default;
-
-
 };
-
 
 
 int main() {
