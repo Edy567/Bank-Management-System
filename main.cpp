@@ -55,9 +55,9 @@ public:
 
     ~Cont() = default;
 
-    [[nodiscard]] const std::string &getIBAN() const {
-        return IBAN;
-    }
+    //[[nodiscard]] const std::string &getIBAN() const {
+    //    return IBAN;
+    //}
 };
 
 class Client {
