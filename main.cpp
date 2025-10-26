@@ -4,6 +4,60 @@
 #include <string>
 
 
+class Moneda {
+    std::string cod;
+    std::string nume;
+    double cursValutar; // fata de RON
+
+    public:
+
+    Moneda(const std::string &cod, const std::string &nume, const double &cursValutar) {
+        this->cod = cod;
+        this->nume = nume;
+        this->cursValutar = cursValutar;
+    }
+
+    Moneda(const Moneda &other) = default;
+    Moneda &operator=(const Moneda &other) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Moneda &moneda) {
+        os << moneda.cod << " " << moneda.nume << " " << moneda.cursValutar;
+        return os;
+    }
+    const std::string& getCod() const { return cod; }
+    ~Moneda() = default;
+
+};
+
+class Card {
+    double suma;
+    std::string titular;
+    std::string numarExp;
+    std::string nrCard;
+    Moneda moneda;
+
+public:
+    Card(const double &suma ,const std::string &titular, const std::string &numarExp, const std::string &nrCard, const Moneda &moneda) : moneda(moneda){
+        this->suma = suma;
+        this->titular = titular;
+        this->numarExp = numarExp;
+        this->nrCard = nrCard;
+    }
+    Card(const Card &other) = default;
+
+    Card &operator=(const Card &other) = default;
+
+    friend std::ostream &operator<<(std::ostream &os, const Card &card) {
+        os << card.titular << " " << card.numarExp << " " << card.nrCard << " " << " \n "<< card.moneda; ;
+        return os;
+    }
+    double getSuma() const { return suma; }
+    const Moneda& getMoneda() const { return moneda; }
+
+    ~Card() = default;
+
+};
+
 class Tranzactie {
     int suma;
     std::string data;
@@ -31,13 +85,14 @@ public:
 
 
 class Cont {
-    int suma;
+
     std::string IBAN;
+    std::vector<Card> carduri;
     std::vector<Tranzactie> tranzactii;
 
 public:
-    explicit Cont(const int &suma, const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
-        this->suma = suma;
+    explicit Cont(const std::vector<Card> &carduri, const std::string &IBAN, const std::vector<Tranzactie> &tranzactii) {
+        this->carduri = carduri;
         this->IBAN = IBAN;
         this->tranzactii = tranzactii;
     }
@@ -47,11 +102,27 @@ public:
     Cont &operator=(const Cont &other) = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Cont &cont) {
-        os << cont.suma << " " << cont.IBAN << " \n";
+        os << cont.IBAN << " \n";
+
+        for (const auto &card : cont.carduri) {
+            os<< card << " " ;
+        }
+        os << " \n ";
+
         for (const auto &tr: cont.tranzactii) {
             os << tr << " " << "\n";
         }
         return os;
+    }
+
+    double getSumaByMoneda(const std::string &codMoneda) const {
+        double total = 0.0;
+        for (const auto &card : carduri) {
+            if (card.getMoneda().getCod() == codMoneda) { // folosim codul monedei
+                total += card.getSuma();
+            }
+        }
+        return total;
     }
 
     ~Cont() = default;
@@ -133,16 +204,18 @@ int main() {
         return 1;
     }
 
+
     std::string numeBanca;
-    fin >> std::ws; // elimină spațiile inițiale
+    fin >> std::ws;
     std::getline(fin, numeBanca);
+
 
     int nrClienti;
     fin >> nrClienti;
 
     std::vector<Client> clienti;
 
-    for (int i = 0; i < nrClienti; i++) {
+    for (int i = 0; i < nrClienti; ++i) {
         std::string nume, prenume, CNP;
         fin >> nume >> prenume >> CNP;
 
@@ -151,35 +224,46 @@ int main() {
 
         std::vector<Cont> conturi;
 
-        for (int j = 0; j < nrConturi; j++) {
-            int suma;
+        for (int j = 0; j < nrConturi; ++j) {
             std::string IBAN;
-            fin >> suma >> IBAN;
+            fin >> IBAN;
+
+            int nrCarduri;
+            fin >> nrCarduri;
+
+            std::vector<Card> carduri;
+            for (int k = 0; k < nrCarduri; ++k) {
+                double suma;
+                std::string titular, numarExp, nrCard, codMoneda, numeMoneda;
+                double cursValutar;
+
+                fin >> suma >> codMoneda >> numeMoneda >> cursValutar >> titular >> numarExp >> nrCard;
+                Moneda moneda(codMoneda, numeMoneda, cursValutar);
+                carduri.emplace_back(suma, titular, numarExp, nrCard, moneda);
+            }
 
             int nrTranzactii;
             fin >> nrTranzactii;
-
             std::vector<Tranzactie> tranzactii;
-
-            for (int k = 0; k < nrTranzactii; k++) {
+            for (int k = 0; k < nrTranzactii; ++k) {
                 int sumaTr;
                 std::string data, buyIBAN, sellIBAN;
                 fin >> sumaTr >> data >> buyIBAN >> sellIBAN;
                 tranzactii.emplace_back(sumaTr, data, buyIBAN, sellIBAN);
             }
 
-            conturi.emplace_back(suma, IBAN, tranzactii);
+            conturi.emplace_back(carduri, IBAN, tranzactii);
         }
 
         clienti.emplace_back(nume, prenume, CNP, conturi);
     }
 
-    // Creăm banca cu datele citite
     Banca banca(numeBanca, clienti);
 
-    // Afișăm tot ce am citit
+
     std::cout << banca << std::endl;
 
     fin.close();
     return 0;
 }
+
