@@ -26,7 +26,7 @@ public:
         return os;
     }
 
-    [[nodiscard]] const std::string &getCod() const { return cod; }
+   // [[nodiscard]] const std::string &getCod() const { return cod; }
 
     ~Moneda() = default;
 };
@@ -57,7 +57,7 @@ public:
     }
 
     [[nodiscard]] double getSuma() const { return suma; }
-    [[nodiscard]] const Moneda &getMoneda() const { return moneda; }
+   // [[nodiscard]] const Moneda &getMoneda() const { return moneda; }
     void scadeSuma(double valoare) { suma -= valoare; }
     void adaugaSuma(double valoare) { suma += valoare; }
 
@@ -356,7 +356,8 @@ int main() {
                 break;
             }
 
-            if (!(in >> venit >> scorCredit)) { std::cerr << "Eroare citire venit/scor\n";
+            if (!(in >> venit >> scorCredit)) {
+                std::cerr << "Eroare citire venit/scor\n";
                 break;
             }
             std::getline(in, line); // consum rest linie
