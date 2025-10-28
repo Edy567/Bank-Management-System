@@ -1,6 +1,6 @@
 # Bank management System
 
-### Folosiți template-ul corespunzător grupei voastre!
+### A banking management system that handles accounts, cards, transactions, exchanges between accounts, and evaluates clients if they are elligble for certain things like a credit. 
 
 | Laborant  | Link template                                |
 |-----------|----------------------------------------------|
