@@ -121,7 +121,7 @@ public:
         }
         return os;
     }
-
+/*
     [[nodiscard]] double getSumByCurr(const std::string &codMoneda) const {
         double total = 0.0;
         for (const auto &card: carduri) {
@@ -131,15 +131,16 @@ public:
             }
         }
         return total;
-    }
+    } */
 
     ~Cont() = default;
 
     [[nodiscard]] const std::string &getIBAN() const {
         return IBAN;
     }
+
     bool retrageSuma(double suma) {
-        for (auto &card : carduri) {
+        for (auto &card: carduri) {
             if (card.getSuma() >= suma) {
                 // aici presupunem că vrem să retragem de pe primul card suficient
                 card.scadeSuma(suma);
@@ -153,7 +154,6 @@ public:
         if (!carduri.empty())
             carduri[0].adaugaSuma(suma);
     }
-
 };
 
 class Client {
@@ -195,11 +195,11 @@ public:
         return os;
     }
 
-    [[nodiscard]]  std::vector<Cont> &getConturi()  {
+    [[nodiscard]] std::vector<Cont> &getConturi() {
         return conturi;
     }
 
-     [[nodiscard]] std::string credit(double suma, int luni) const {
+    [[nodiscard]] std::string credit(double suma, int luni) const {
         const double rata = (suma / luni) * 1.05;
         double raport = rata / venit;
 
@@ -211,7 +211,7 @@ public:
             return "Cerere respinsa";
     }
 
-    [[nodiscard]] const std::string& getCNP() const {
+    [[nodiscard]] const std::string &getCNP() const {
         return CNP;
     }
 
@@ -223,20 +223,21 @@ class Angajat {
     int id;
     int salariu;
 
-    public:
-        Angajat(std::string nume, const int &id, const int &salariu) : nume(std::move(nume)), id(id), salariu(salariu) {};
+public:
+    Angajat(std::string nume, const int &id, const int &salariu) : nume(std::move(nume)), id(id), salariu(salariu) {
+    };
 
-        Angajat(const Angajat &other) = default;
+    Angajat(const Angajat &other) = default;
 
-        Angajat &operator=(const Angajat &other) = default;
+    Angajat &operator=(const Angajat &other) = default;
 
-        friend std::ostream &operator<<(std::ostream &os, const Angajat &ang) {
+    friend std::ostream &operator<<(std::ostream &os, const Angajat &ang) {
         os << ang.nume << " " << ang.id << " " << ang.salariu;
         return os;
     }
+
     ~Angajat() = default;
 };
-
 
 
 class Banca {
@@ -273,12 +274,12 @@ public:
     }
 
     bool transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, const double suma) {
-         Cont *contSursa = nullptr;
-         Cont *contDestinatie = nullptr;
+        Cont *contSursa = nullptr;
+        Cont *contDestinatie = nullptr;
 
         // Cautăm conturile
-        for (auto &client : clienti) {
-            for (auto &cont : client.getConturi()) {
+        for (auto &client: clienti) {
+            for (auto &cont: client.getConturi()) {
                 if (cont.getIBAN() == ibanSursa)
                     contSursa = &cont;
                 if (cont.getIBAN() == ibanDestinatie)
@@ -287,7 +288,7 @@ public:
         }
 
         if (!contSursa || !contDestinatie) {
-            std::cout <<  "Unul dintre IBAN-uri nu exista in banca.\n";
+            std::cout << "Unul dintre IBAN-uri nu exista in banca.\n";
             return false;
         }
 
@@ -301,11 +302,9 @@ public:
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
-                  << ibanSursa << " la " << ibanDestinatie << "\n";
+                << ibanSursa << " la " << ibanDestinatie << "\n";
         return true;
     }
-
-
 
 
     ~Banca() = default;
@@ -323,7 +322,6 @@ int main() {
     if (!in.is_open()) {
         std::cout << "Fisierul '" << filename << "' nu a fost gasit.\n";
     } else {
-
         std::string line;
 
         if (!std::getline(in, bancaNume)) {
@@ -345,26 +343,46 @@ int main() {
             double venit = 0.0;
             int scorCredit = 0;
 
-            if (!std::getline(in, nume)) { std::cerr << "Eroare citire nume client\n"; break; }
-            if (!std::getline(in, prenume)) { std::cerr << "Eroare citire prenume client\n"; break; }
-            if (!std::getline(in, CNP)) { std::cerr << "Eroare citire CNP client\n"; break; }
+            if (!std::getline(in, nume)) {
+                std::cerr << "Eroare citire nume client\n";
+                break;
+            }
+            if (!std::getline(in, prenume)) {
+                std::cerr << "Eroare citire prenume client\n";
+                break;
+            }
+            if (!std::getline(in, CNP)) {
+                std::cerr << "Eroare citire CNP client\n";
+                break;
+            }
 
-            if (!(in >> venit >> scorCredit)) { std::cerr << "Eroare citire venit/scor\n"; break; }
+            if (!(in >> venit >> scorCredit)) { std::cerr << "Eroare citire venit/scor\n";
+                break;
+            }
             std::getline(in, line); // consum rest linie
 
             // conturi
             int numConturi = 0;
-            if (!(in >> numConturi)) { std::cerr << "Eroare citire numConturi\n"; break; }
+            if (!(in >> numConturi)) {
+                std::cerr << "Eroare citire numConturi\n";
+                break;
+            }
             std::getline(in, line);
 
             std::vector<Cont> conturi_client;
 
             for (int c = 0; c < numConturi; ++c) {
                 std::string IBAN;
-                if (!std::getline(in, IBAN)) { std::cerr << "Eroare citire IBAN\n"; break; }
+                if (!std::getline(in, IBAN)) {
+                    std::cerr << "Eroare citire IBAN\n";
+                    break;
+                }
 
                 int numCarduri = 0;
-                if (!(in >> numCarduri)) { std::cerr << "Eroare citire numCarduri\n"; break; }
+                if (!(in >> numCarduri)) {
+                    std::cerr << "Eroare citire numCarduri\n";
+                    break;
+                }
                 std::getline(in, line);
 
                 std::vector<Card> carduri;
@@ -375,17 +393,38 @@ int main() {
                     std::string codMoneda, numeMoneda;
                     double cursValutar = 1.0;
 
-                    if (!(in >> suma)) { std::cerr << "Eroare citire suma card\n"; break; }
+                    if (!(in >> suma)) {
+                        std::cerr << "Eroare citire suma card\n";
+                        break;
+                    }
                     std::getline(in, line); // consum rest linie
 
-                    if (!std::getline(in, titular)) { std::cerr << "Eroare citire titular\n"; break; }
-                    if (!std::getline(in, numarExp)) { std::cerr << "Eroare citire numarExp\n"; break; }
-                    if (!std::getline(in, nrCard)) { std::cerr << "Eroare citire nrCard\n"; break; }
+                    if (!std::getline(in, titular)) {
+                        std::cerr << "Eroare citire titular\n";
+                        break;
+                    }
+                    if (!std::getline(in, numarExp)) {
+                        std::cerr << "Eroare citire numarExp\n";
+                        break;
+                    }
+                    if (!std::getline(in, nrCard)) {
+                        std::cerr << "Eroare citire nrCard\n";
+                        break;
+                    }
 
-                    if (!std::getline(in, codMoneda)) { std::cerr << "Eroare citire codMoneda\n"; break; }
-                    if (!std::getline(in, numeMoneda)) { std::cerr << "Eroare citire numeMoneda\n"; break; }
+                    if (!std::getline(in, codMoneda)) {
+                        std::cerr << "Eroare citire codMoneda\n";
+                        break;
+                    }
+                    if (!std::getline(in, numeMoneda)) {
+                        std::cerr << "Eroare citire numeMoneda\n";
+                        break;
+                    }
 
-                    if (!(in >> cursValutar)) { std::cerr << "Eroare citire cursValutar\n"; break; }
+                    if (!(in >> cursValutar)) {
+                        std::cerr << "Eroare citire cursValutar\n";
+                        break;
+                    }
                     std::getline(in, line);
 
                     Moneda m(codMoneda, numeMoneda, cursValutar);
@@ -394,18 +433,33 @@ int main() {
                 }
 
                 int numTranzactii = 0;
-                if (!(in >> numTranzactii)) { std::cerr << "Eroare citire numTranzactii\n"; break; }
+                if (!(in >> numTranzactii)) {
+                    std::cerr << "Eroare citire numTranzactii\n";
+                    break;
+                }
                 std::getline(in, line);
 
                 std::vector<Tranzactie> tranzactii;
                 for (int t = 0; t < numTranzactii; ++t) {
                     int sumaT = 0;
                     std::string data, buyIBAN, sellIBAN;
-                    if (!(in >> sumaT)) { std::cerr << "Eroare citire suma tranzactie\n"; break; }
+                    if (!(in >> sumaT)) {
+                        std::cerr << "Eroare citire suma tranzactie\n";
+                        break;
+                    }
                     std::getline(in, line);
-                    if (!std::getline(in, data)) { std::cerr << "Eroare citire data tranzactie\n"; break; }
-                    if (!std::getline(in, buyIBAN)) { std::cerr << "Eroare citire buyIBAN\n"; break; }
-                    if (!std::getline(in, sellIBAN)) { std::cerr << "Eroare citire sellIBAN\n"; break; }
+                    if (!std::getline(in, data)) {
+                        std::cerr << "Eroare citire data tranzactie\n";
+                        break;
+                    }
+                    if (!std::getline(in, buyIBAN)) {
+                        std::cerr << "Eroare citire buyIBAN\n";
+                        break;
+                    }
+                    if (!std::getline(in, sellIBAN)) {
+                        std::cerr << "Eroare citire sellIBAN\n";
+                        break;
+                    }
 
                     Tranzactie tr(sumaT, data, buyIBAN, sellIBAN);
                     tranzactii.push_back(tr);
@@ -427,9 +481,15 @@ int main() {
             std::getline(in, line);
             for (int a = 0; a < numAngajati; ++a) {
                 std::string angNume;
-                if (!std::getline(in, angNume)) { std::cerr << "Eroare citire nume angajat\n"; break; }
+                if (!std::getline(in, angNume)) {
+                    std::cerr << "Eroare citire nume angajat\n";
+                    break;
+                }
                 int id = 0, salariu = 0;
-                if (!(in >> id >> salariu)) { std::cerr << "Eroare citire id/salariu angajat\n"; break; }
+                if (!(in >> id >> salariu)) {
+                    std::cerr << "Eroare citire id/salariu angajat\n";
+                    break;
+                }
                 std::getline(in, line);
                 Angajat ang(angNume, id, salariu);
                 angajati.push_back(ang);
