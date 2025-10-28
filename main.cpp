@@ -26,7 +26,7 @@ public:
         return os;
     }
 
-   // [[nodiscard]] const std::string &getCod() const { return cod; }
+    // [[nodiscard]] const std::string &getCod() const { return cod; }
 
     ~Moneda() = default;
 };
@@ -57,7 +57,7 @@ public:
     }
 
     [[nodiscard]] double getSuma() const { return suma; }
-   // [[nodiscard]] const Moneda &getMoneda() const { return moneda; }
+    // [[nodiscard]] const Moneda &getMoneda() const { return moneda; }
     void scadeSuma(double valoare) { suma -= valoare; }
     void adaugaSuma(double valoare) { suma += valoare; }
 
@@ -139,7 +139,7 @@ public:
         return IBAN;
     }
 
-    bool retrageSuma(double suma) {
+    bool retrageSuma(const double suma) {
         for (auto &card: carduri) {
             if (card.getSuma() >= suma) {
                 // aici presupunem că vrem să retragem de pe primul card suficient
@@ -150,7 +150,7 @@ public:
         return false; // fonduri insuficiente
     }
 
-    void adaugaSuma(double suma) {
+    void adaugaSuma(const double suma) {
         if (!carduri.empty())
             carduri[0].adaugaSuma(suma);
     }
@@ -199,7 +199,7 @@ public:
         return conturi;
     }
 
-    [[nodiscard]] std::string credit(double suma, int luni) const {
+    [[nodiscard]] std::string credit(const double suma, int luni) const {
         const double rata = (suma / luni) * 1.05;
         double raport = rata / venit;
 
@@ -277,7 +277,7 @@ public:
         Cont *contSursa = nullptr;
         Cont *contDestinatie = nullptr;
 
-        // Cautăm conturile
+
         for (auto &client: clienti) {
             for (auto &cont: client.getConturi()) {
                 if (cont.getIBAN() == ibanSursa)
@@ -292,13 +292,13 @@ public:
             return false;
         }
 
-        // verificăm fondurile
+
         if (!contSursa->retrageSuma(suma)) {
             std::cout << "Fonduri insuficiente.\n";
             return false;
         }
 
-        // efectuăm transferul
+
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
@@ -329,16 +329,16 @@ int main() {
             return 1;
         }
 
-        // 2) numar clienti
+
         int numClienti = 0;
         if (!(in >> numClienti)) {
             std::cerr << "Fisier invalid: nu am putut citi numarul de clienti.\n";
             return 1;
         }
-        std::getline(in, line); // consum rest linie
+        std::getline(in, line);
 
         for (int i = 0; i < numClienti; ++i) {
-            // citim campurile clientului
+
             std::string nume, prenume, CNP;
             double venit = 0.0;
             int scorCredit = 0;
@@ -360,9 +360,9 @@ int main() {
                 std::cerr << "Eroare citire venit/scor\n";
                 break;
             }
-            std::getline(in, line); // consum rest linie
+            std::getline(in, line);
 
-            // conturi
+
             int numConturi = 0;
             if (!(in >> numConturi)) {
                 std::cerr << "Eroare citire numConturi\n";
@@ -398,7 +398,7 @@ int main() {
                         std::cerr << "Eroare citire suma card\n";
                         break;
                     }
-                    std::getline(in, line); // consum rest linie
+                    std::getline(in, line);
 
                     if (!std::getline(in, titular)) {
                         std::cerr << "Eroare citire titular\n";
@@ -511,7 +511,7 @@ int main() {
         std::cout << "2. Transfer intre conturi \n";
         std::cout << "3. Cere un credit \n";
         std::cout << "0. Iesire\n";
-        std::cout << "Optiunea: ";
+        std::cout << " waiting for input: ";
         if (!(std::cin >> opt)) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
@@ -539,7 +539,7 @@ int main() {
             std::cout << "Numar luni: ";
             std::cin >> luni;
             bool gasit = false;
-            for (auto &cl : clienti) {
+            for (const auto &cl : clienti) {
                 if (cl.getCNP() == cnp) {
                     std::cout << "Rezultat: " << cl.credit(suma, luni) << "\n";
                     gasit = true;
