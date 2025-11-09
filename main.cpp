@@ -50,7 +50,8 @@ class Card {
 public:
     Card(const double &suma, std::string titular, std::string numarExp,
          std::string nrCard, const Moneda &moneda)
-        : suma(suma), titular(std::move(titular)), numarExp(std::move(numarExp)), nrCard(std::move(nrCard)), moneda(moneda) {
+        : suma(suma), titular(std::move(titular)), numarExp(std::move(numarExp)), nrCard(std::move(nrCard)),
+          moneda(moneda) {
         std::cout << "(Card) Constructor parametrizat\n";
     }
 
@@ -357,7 +358,7 @@ public:
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
-                  << ibanSursa << " la " << ibanDestinatie << "\n";
+                << ibanSursa << " la " << ibanDestinatie << "\n";
         return true;
     }
 
