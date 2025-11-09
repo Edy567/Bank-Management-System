@@ -4,31 +4,40 @@
 #include <vector>
 #include <string>
 
-
 class Moneda {
     std::string cod;
     std::string nume;
-    double cursValutar; // fata de RON
+    double cursValutar;
 
 public:
-    Moneda(const std::string &cod, const std::string &nume, const double &cursValutar) {
-        this->cod = cod;
-        this->nume = nume;
-        this->cursValutar = cursValutar;
+    Moneda(std::string cod, std::string nume, const double &cursValutar)
+        : cod(std::move(cod)), nume(std::move(nume)), cursValutar(cursValutar) {
+        std::cout << "(Moneda) Constructor parametrizat\n";
     }
 
-    Moneda(const Moneda &other) = default;
+    Moneda(const Moneda &other)
+        : cod(other.cod), nume(other.nume), cursValutar(other.cursValutar) {
+        std::cout << "(Moneda) Constructor de copiere\n";
+    }
 
-    Moneda &operator=(const Moneda &other) = default;
+    Moneda &operator=(const Moneda &other) {
+        if (this != &other) {
+            cod = other.cod;
+            nume = other.nume;
+            cursValutar = other.cursValutar;
+            std::cout << "(Moneda) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Moneda &moneda) {
         os << moneda.cod << " " << moneda.nume << " " << moneda.cursValutar;
         return os;
     }
 
-    // [[nodiscard]] const std::string &getCod() const { return cod; }
-
-    ~Moneda() = default;
+    ~Moneda() {
+        std::cout << "(Moneda) Destructor\n";
+    }
 };
 
 class Card {
@@ -39,29 +48,43 @@ class Card {
     Moneda moneda;
 
 public:
-    Card(const double &suma, const std::string &titular, const std::string &numarExp, const std::string &nrCard,
-         const Moneda &moneda) : moneda(moneda) {
-        this->suma = suma;
-        this->titular = titular;
-        this->numarExp = numarExp;
-        this->nrCard = nrCard;
+    Card(const double &suma, std::string titular, std::string numarExp,
+         std::string nrCard, const Moneda &moneda)
+        : suma(suma), titular(std::move(titular)), numarExp(std::move(numarExp)), nrCard(std::move(nrCard)), moneda(moneda) {
+        std::cout << "(Card) Constructor parametrizat\n";
     }
 
-    Card(const Card &other) = default;
+    Card(const Card &other)
+        : suma(other.suma), titular(other.titular), numarExp(other.numarExp),
+          nrCard(other.nrCard), moneda(other.moneda) {
+        std::cout << "(Card) Constructor de copiere\n";
+    }
 
-    Card &operator=(const Card &other) = default;
+    Card &operator=(const Card &other) {
+        if (this != &other) {
+            suma = other.suma;
+            titular = other.titular;
+            numarExp = other.numarExp;
+            nrCard = other.nrCard;
+            moneda = other.moneda;
+            std::cout << "(Card) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Card &card) {
-        os << card.titular << " " << card.numarExp << " " << card.nrCard << " " << " \n " << card.moneda;;
+        os << card.titular << " " << card.numarExp << " " << card.nrCard << " \n " << card.moneda;
         return os;
     }
 
     [[nodiscard]] double getSuma() const { return suma; }
-    // [[nodiscard]] const Moneda &getMoneda() const { return moneda; }
+
     void scadeSuma(double valoare) { suma -= valoare; }
     void adaugaSuma(double valoare) { suma += valoare; }
 
-    ~Card() = default;
+    ~Card() {
+        std::cout << "(Card) Destructor\n";
+    }
 };
 
 class Tranzactie {
@@ -71,69 +94,74 @@ class Tranzactie {
     std::string sellIBAN;
 
 public:
-    Tranzactie(const int &sum, const std::string &data, const std::string &buyIBAN, const std::string &sellIBAN) {
-        suma = sum;
-        this->data = data;
-        this->buyIBAN = buyIBAN;
-        this->sellIBAN = sellIBAN;
+    Tranzactie(const int &sum, std::string data, std::string buyIBAN, std::string sellIBAN)
+        : suma(sum), data(std::move(data)), buyIBAN(std::move(buyIBAN)), sellIBAN(std::move(sellIBAN)) {
+        std::cout << "(Tranzactie) Constructor parametrizat\n";
     }
 
-    Tranzactie(const Tranzactie &tr) = default;
+    Tranzactie(const Tranzactie &tr)
+        : suma(tr.suma), data(tr.data), buyIBAN(tr.buyIBAN), sellIBAN(tr.sellIBAN) {
+        std::cout << "(Tranzactie) Constructor de copiere\n";
+    }
 
-    Tranzactie &operator=(const Tranzactie &tr) = default;
+    Tranzactie &operator=(const Tranzactie &tr) {
+        if (this != &tr) {
+            suma = tr.suma;
+            data = tr.data;
+            buyIBAN = tr.buyIBAN;
+            sellIBAN = tr.sellIBAN;
+            std::cout << "(Tranzactie) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {
         return os << tr.data << " " << tr.buyIBAN << " " << tr.sellIBAN;
     }
 
-    ~Tranzactie() = default;
+    ~Tranzactie() {
+        std::cout << "(Tranzactie) Destructor\n";
+    }
 };
 
-
 class Cont {
-
     std::string IBAN;
     std::vector<Card> carduri;
     std::vector<Tranzactie> tranzactii;
 
 public:
-    explicit Cont(const std::vector<Card> &carduri, const std::string &IBAN,
-                  const std::vector<Tranzactie> &tranzactii) {
-        this->carduri = carduri;
-        this->IBAN = IBAN;
-        this->tranzactii = tranzactii;
+    explicit Cont(const std::vector<Card> &carduri, std::string IBAN,
+                  const std::vector<Tranzactie> &tranzactii)
+        : IBAN(std::move(IBAN)), carduri(carduri), tranzactii(tranzactii) {
+        std::cout << "(Cont) Constructor parametrizat\n";
     }
 
-    Cont(const Cont &other) = default;
+    Cont(const Cont &other)
+        : IBAN(other.IBAN), carduri(other.carduri), tranzactii(other.tranzactii) {
+        std::cout << "(Cont) Constructor de copiere\n";
+    }
 
-    Cont &operator=(const Cont &other) = default;
+    Cont &operator=(const Cont &other) {
+        if (this != &other) {
+            IBAN = other.IBAN;
+            carduri = other.carduri;
+            tranzactii = other.tranzactii;
+            std::cout << "(Cont) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Cont &cont) {
         os << cont.IBAN << " \n";
-
         for (const auto &card: cont.carduri) {
             os << card << " ";
         }
         os << " \n ";
-
         for (const auto &tr: cont.tranzactii) {
             os << tr << " " << "\n";
         }
         return os;
     }
-/*
-    [[nodiscard]] double getSumByCurr(const std::string &codMoneda) const {
-        double total = 0.0;
-        for (const auto &card: carduri) {
-            if (card.getMoneda().getCod() == codMoneda) {
-                // folosim codul monedei
-                total += card.getSuma();
-            }
-        }
-        return total;
-    } */
-
-    ~Cont() = default;
 
     [[nodiscard]] const std::string &getIBAN() const {
         return IBAN;
@@ -142,17 +170,20 @@ public:
     bool retrageSuma(const double suma) {
         for (auto &card: carduri) {
             if (card.getSuma() >= suma) {
-                // aici presupunem că vrem să retragem de pe primul card suficient
                 card.scadeSuma(suma);
                 return true;
             }
         }
-        return false; // fonduri insuficiente
+        return false;
     }
 
     void adaugaSuma(const double suma) {
         if (!carduri.empty())
             carduri[0].adaugaSuma(suma);
+    }
+
+    ~Cont() {
+        std::cout << "(Cont) Destructor\n";
     }
 };
 
@@ -165,26 +196,31 @@ class Client {
     int scorCredit;
 
 public:
-    explicit Client(const std::string &nume, const std::string &prenume, const std::string &CNP,
-                    const std::vector<Cont> &conturi, const double &venit, const int &scorCredit) {
-        this->nume = nume;
-        this->prenume = prenume;
-        this->CNP = CNP;
-        this->conturi = conturi;
-        this->venit = venit;
-        this->scorCredit = scorCredit;
+    explicit Client(std::string nume, std::string prenume, std::string CNP,
+                    const std::vector<Cont> &conturi, const double &venit, const int &scorCredit)
+        : nume(std::move(nume)), prenume(std::move(prenume)), CNP(std::move(CNP)),
+          conturi(conturi), venit(venit), scorCredit(scorCredit) {
+        std::cout << "(Client) Constructor parametrizat\n";
     }
 
-    Client(const Client &other) {
-        this->nume = other.nume;
-        this->prenume = other.prenume;
-        this->CNP = other.CNP;
-        this->conturi = other.conturi;
-        this->venit = other.venit;
-        this->scorCredit = other.scorCredit;
+    Client(const Client &other)
+        : nume(other.nume), prenume(other.prenume), CNP(other.CNP),
+          conturi(other.conturi), venit(other.venit), scorCredit(other.scorCredit) {
+        std::cout << "(Client) Constructor de copiere\n";
     }
 
-    Client &operator=(const Client &other) = default;
+    Client &operator=(const Client &other) {
+        if (this != &other) {
+            nume = other.nume;
+            prenume = other.prenume;
+            CNP = other.CNP;
+            conturi = other.conturi;
+            venit = other.venit;
+            scorCredit = other.scorCredit;
+            std::cout << "(Client) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Client &c) {
         os << c.nume << " " << c.prenume << " " << c.CNP << " " << c.venit << " " << c.scorCredit;
@@ -215,7 +251,9 @@ public:
         return CNP;
     }
 
-    ~Client() = default;
+    ~Client() {
+        std::cout << "[Client] Destructor\n";
+    }
 };
 
 class Angajat {
@@ -224,21 +262,35 @@ class Angajat {
     int salariu;
 
 public:
-    Angajat(std::string nume, const int &id, const int &salariu) : nume(std::move(nume)), id(id), salariu(salariu) {
-    };
+    Angajat(std::string nume, const int &id, const int &salariu)
+        : nume(std::move(nume)), id(id), salariu(salariu) {
+        std::cout << "(Angajat) Constructor parametrizat\n";
+    }
 
-    Angajat(const Angajat &other) = default;
+    Angajat(const Angajat &other)
+        : nume(other.nume), id(other.id), salariu(other.salariu) {
+        std::cout << "(Angajat) Constructor de copiere\n";
+    }
 
-    Angajat &operator=(const Angajat &other) = default;
+    Angajat &operator=(const Angajat &other) {
+        if (this != &other) {
+            nume = other.nume;
+            id = other.id;
+            salariu = other.salariu;
+            std::cout << "(Angajat) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Angajat &ang) {
         os << ang.nume << " " << ang.id << " " << ang.salariu;
         return os;
     }
 
-    ~Angajat() = default;
+    ~Angajat() {
+        std::cout << "(Angajat) Destructor\n";
+    }
 };
-
 
 class Banca {
     std::vector<Client> clienti;
@@ -246,23 +298,29 @@ class Banca {
     std::string nume;
 
 public:
-    explicit Banca(const std::string &nume, const std::vector<Client> &clienti, const std::vector<Angajat> &angajati) {
-        this->nume = nume;
-        this->clienti = clienti;
-        this->angajati = angajati;
+    explicit Banca(std::string nume, const std::vector<Client> &clienti, const std::vector<Angajat> &angajati)
+        : clienti(clienti), angajati(angajati), nume(std::move(nume)) {
+        std::cout << "(Banca) Constructor parametrizat\n";
     }
 
-    Banca(const Banca &other) {
-        this->nume = other.nume;
-        this->clienti = other.clienti;
-        this->angajati = other.angajati;
+    Banca(const Banca &other)
+        : clienti(other.clienti), angajati(other.angajati), nume(other.nume) {
+        std::cout << "(Banca) Constructor de copiere\n";
     }
 
-    Banca &operator=(const Banca &other) = default;
+    Banca &operator=(const Banca &other) {
+        if (this != &other) {
+            clienti = other.clienti;
+            angajati = other.angajati;
+            nume = other.nume;
+            std::cout << "(Banca) Operator= apelat\n";
+        }
+        return *this;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Banca &banca) {
         os << banca.nume << " " << std::endl;
-        os<<" Clienti: ";
+        os << " Clienti: ";
         for (const auto &cont: banca.clienti) {
             os << cont << "\n";
         }
@@ -276,7 +334,6 @@ public:
     bool transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, const double suma) {
         Cont *contSursa = nullptr;
         Cont *contDestinatie = nullptr;
-
 
         for (auto &client: clienti) {
             for (auto &cont: client.getConturi()) {
@@ -292,22 +349,21 @@ public:
             return false;
         }
 
-
         if (!contSursa->retrageSuma(suma)) {
             std::cout << "Fonduri insuficiente.\n";
             return false;
         }
 
-
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
-                << ibanSursa << " la " << ibanDestinatie << "\n";
+                  << ibanSursa << " la " << ibanDestinatie << "\n";
         return true;
     }
 
-
-    ~Banca() = default;
+    ~Banca() {
+        std::cout << "(Banca) Destructor\n";
+    }
 };
 
 
@@ -338,7 +394,6 @@ int main() {
         std::getline(in, line);
 
         for (int i = 0; i < numClienti; ++i) {
-
             std::string nume, prenume, CNP;
             double venit = 0.0;
             int scorCredit = 0;
@@ -539,7 +594,7 @@ int main() {
             std::cout << "Numar luni: ";
             std::cin >> luni;
             bool gasit = false;
-            for (const auto &cl : clienti) {
+            for (const auto &cl: clienti) {
                 if (cl.getCNP() == cnp) {
                     std::cout << "Rezultat: " << cl.credit(suma, luni) << "\n";
                     gasit = true;
