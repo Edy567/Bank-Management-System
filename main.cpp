@@ -11,12 +11,12 @@ class Moneda {
 
 public:
     Moneda(std::string cod, std::string nume, const double &cursValutar)
-        : cod(std::move(cod)), nume(std::move(nume)), cursValutar(cursValutar) {
+        : cod{std::move(cod)}, nume{std::move(nume)}, cursValutar{cursValutar} {
         std::cout << "(Moneda) Constructor parametrizat\n";
     }
 
     Moneda(const Moneda &other)
-        : cod(other.cod), nume(other.nume), cursValutar(other.cursValutar) {
+        : cod{other.cod}, nume{other.nume}, cursValutar{other.cursValutar} {
         std::cout << "(Moneda) Constructor de copiere\n";
     }
 
@@ -50,14 +50,14 @@ class Card {
 public:
     Card(const double &suma, std::string titular, std::string numarExp,
          std::string nrCard, const Moneda &moneda)
-        : suma(suma), titular(std::move(titular)), numarExp(std::move(numarExp)), nrCard(std::move(nrCard)),
-          moneda(moneda) {
+        : suma{suma}, titular{std::move(titular)}, numarExp{std::move(numarExp)}, nrCard{std::move(nrCard)},
+          moneda{moneda} {
         std::cout << "(Card) Constructor parametrizat\n";
     }
 
     Card(const Card &other)
-        : suma(other.suma), titular(other.titular), numarExp(other.numarExp),
-          nrCard(other.nrCard), moneda(other.moneda) {
+        : suma{other.suma}, titular{other.titular}, numarExp{other.numarExp},
+          nrCard{other.nrCard}, moneda{other.moneda} {
         std::cout << "(Card) Constructor de copiere\n";
     }
 
@@ -96,12 +96,12 @@ class Tranzactie {
 
 public:
     Tranzactie(const int &sum, std::string data, std::string buyIBAN, std::string sellIBAN)
-        : suma(sum), data(std::move(data)), buyIBAN(std::move(buyIBAN)), sellIBAN(std::move(sellIBAN)) {
+        : suma{sum}, data{std::move(data)}, buyIBAN{std::move(buyIBAN)}, sellIBAN{std::move(sellIBAN)} {
         std::cout << "(Tranzactie) Constructor parametrizat\n";
     }
 
     Tranzactie(const Tranzactie &tr)
-        : suma(tr.suma), data(tr.data), buyIBAN(tr.buyIBAN), sellIBAN(tr.sellIBAN) {
+        : suma{tr.suma}, data{tr.data}, buyIBAN{tr.buyIBAN}, sellIBAN{tr.sellIBAN} {
         std::cout << "(Tranzactie) Constructor de copiere\n";
     }
 
@@ -133,12 +133,12 @@ class Cont {
 public:
     explicit Cont(const std::vector<Card> &carduri, std::string IBAN,
                   const std::vector<Tranzactie> &tranzactii)
-        : IBAN(std::move(IBAN)), carduri(carduri), tranzactii(tranzactii) {
+        : IBAN{std::move(IBAN)}, carduri{carduri}, tranzactii{tranzactii} {
         std::cout << "(Cont) Constructor parametrizat\n";
     }
 
     Cont(const Cont &other)
-        : IBAN(other.IBAN), carduri(other.carduri), tranzactii(other.tranzactii) {
+        : IBAN{other.IBAN}, carduri{other.carduri}, tranzactii{other.tranzactii} {
         std::cout << "(Cont) Constructor de copiere\n";
     }
 
@@ -199,14 +199,14 @@ class Client {
 public:
     explicit Client(std::string nume, std::string prenume, std::string CNP,
                     const std::vector<Cont> &conturi, const double &venit, const int &scorCredit)
-        : nume(std::move(nume)), prenume(std::move(prenume)), CNP(std::move(CNP)),
-          conturi(conturi), venit(venit), scorCredit(scorCredit) {
+        : nume{std::move(nume)}, prenume{std::move(prenume)}, CNP{std::move(CNP)},
+          conturi{conturi}, venit{venit}, scorCredit{scorCredit} {
         std::cout << "(Client) Constructor parametrizat\n";
     }
 
     Client(const Client &other)
-        : nume(other.nume), prenume(other.prenume), CNP(other.CNP),
-          conturi(other.conturi), venit(other.venit), scorCredit(other.scorCredit) {
+        : nume{other.nume}, prenume{other.prenume}, CNP{other.CNP},
+          conturi{other.conturi}, venit{other.venit}, scorCredit{other.scorCredit} {
         std::cout << "(Client) Constructor de copiere\n";
     }
 
@@ -264,12 +264,12 @@ class Angajat {
 
 public:
     Angajat(std::string nume, const int &id, const int &salariu)
-        : nume(std::move(nume)), id(id), salariu(salariu) {
+        : nume{std::move(nume)}, id{id}, salariu{salariu} {
         std::cout << "(Angajat) Constructor parametrizat\n";
     }
 
     Angajat(const Angajat &other)
-        : nume(other.nume), id(other.id), salariu(other.salariu) {
+        : nume{other.nume}, id{other.id}, salariu{other.salariu} {
         std::cout << "(Angajat) Constructor de copiere\n";
     }
 
@@ -300,12 +300,12 @@ class Banca {
 
 public:
     explicit Banca(std::string nume, const std::vector<Client> &clienti, const std::vector<Angajat> &angajati)
-        : clienti(clienti), angajati(angajati), nume(std::move(nume)) {
+        : clienti{clienti}, angajati{angajati}, nume{std::move(nume)} {
         std::cout << "(Banca) Constructor parametrizat\n";
     }
 
     Banca(const Banca &other)
-        : clienti(other.clienti), angajati(other.angajati), nume(other.nume) {
+        : clienti{other.clienti}, angajati{other.angajati}, nume{other.nume} {
         std::cout << "(Banca) Constructor de copiere\n";
     }
 
@@ -358,7 +358,7 @@ public:
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
-                << ibanSursa << " la " << ibanDestinatie << "\n";
+                  << ibanSursa << " la " << ibanDestinatie << "\n";
         return true;
     }
 
