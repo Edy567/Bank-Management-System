@@ -25,9 +25,9 @@ Clasa Moneda stochează informații precum codul valutar, denumirea monedei și 
 
 4. Gestionarea tranzacțiilor:
 Sistemul înregistrează toate tranzacțiile efectuate între conturi. Acestea pot fi:
-Tranzacții interne: între conturile aceluiași client;
-Tranzacții inter-clienți: între clienți ai aceleiași bănci;
-Tranzacții interbancare: între conturi aparținând altor bănci (acces extins către alte instituții bancare).
+Tranzacții interne (între conturile aceluiași client);
+Tranzacții inter-clienți (între clienți ai aceleiași bănci);
+Tranzacții interbancare [între conturi aparținând altor bănci (acces extins către alte instituții bancare)].
 Fiecare tranzacție stochează suma, data, IBAN-ul sursă și IBAN-ul destinație, oferind trasabilitate completă și transparență în istoricul operațiunilor.
 
 5. Evaluarea eligibilității pentru credit:
