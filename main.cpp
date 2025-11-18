@@ -358,7 +358,7 @@ public:
         contDestinatie->adaugaSuma(suma);
 
         std::cout << "Transfer reusit: " << suma << " RON trimis de la "
-                  << ibanSursa << " la " << ibanDestinatie << "\n";
+                << ibanSursa << " la " << ibanDestinatie << "\n";
         return true;
     }
 
@@ -369,7 +369,7 @@ public:
 
 
 int main() {
-    std::string filename = "tastatura.txt";
+    std::string filename = "citire.txt";
     std::ifstream in(filename);
 
     std::string bancaNume = "Banca";
