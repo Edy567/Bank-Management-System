@@ -1,6 +1,41 @@
 # Bank management System
 
-### A banking management system that handles accounts, cards, transactions, exchanges between accounts, and evaluates clients if they are elligble for certain things like a credit. 
+Un proiect C++ orientat pe obiecte care simulează funcționarea unui sistem bancar modern.
+Aplicația gestionează clienți, conturi, carduri, tranzacții, schimburi valutare, angajați și analizează eligibilitatea pentru obținerea unui credit.
+
+Funcționalități principale
+
+1. Administrarea conturilor bancare:
+Sistemul gestionează multiple conturi pentru fiecare client, fiecare cont fiind identificat printr-un IBAN unic.
+Un cont poate avea mai multe carduri, fiecare exprimat într-o anumită monedă (RON, EUR, USD etc.) și cu un sold propriu. Aplicația permite:
+depuneri și retrageri de fonduri,
+actualizarea soldului în timp real,
+verificarea disponibilului înaintea efectuării unei tranzacții.
+
+2. Tipuri de conturi și pachete personalizate:
+Clienții pot beneficia de mai multe tipuri de conturi, în funcție de nevoi și statut financiar:
+Cont Normal: acces la operațiuni de bază, limite standard de tranzacționare și servicii esențiale.
+Cont Premium: limite de tranzacționare mai mari, taxe reduse și procesare prioritară.
+Cont Platinum: acces exclusiv la produse financiare speciale, servicii personalizate și posibilitatea de a efectua tranzacții internaționale complexe.
+Prin aceste pachete, sistemul reproduce fidel structura reală a serviciilor bancare moderne, unde clienții pot alege nivelul de acces și avantajele potrivite profilului lor financiar.
+
+3. Administrarea cardurilor și monedelor:
+Fiecare card este asociat unei monede specifice și include detalii precum titularul, numărul cardului, data de expirare și soldul curent.
+Clasa Moneda stochează informații precum codul valutar, denumirea monedei și cursul de schimb, permițând simularea conversiilor între valute la cursuri dinamice.
+
+4. Gestionarea tranzacțiilor:
+Sistemul înregistrează toate tranzacțiile efectuate între conturi. Acestea pot fi:
+Tranzacții interne (între conturile aceluiași client);
+Tranzacții inter-clienți (între clienți ai aceleiași bănci);
+Tranzacții interbancare [între conturi aparținând altor bănci (acces extins către alte instituții bancare)].
+Fiecare tranzacție stochează suma, data, IBAN-ul sursă și IBAN-ul destinație, oferind trasabilitate completă și transparență în istoricul operațiunilor.
+
+5. Evaluarea eligibilității pentru credit:
+Pe baza venitului lunar și a scorului de credit al clientului, sistemul poate evalua automat eligibilitatea pentru obținerea unui credit.
+Logica implementată analizează raportul dintre rata lunară și venit, adaptând rezultatul în funcție de istoricul financiar al clientului:
+Scor mare și venit stabil - cerere aprobată;
+Scor mediu - cerere în analiză;
+Scor redus sau venit insuficient - cerere respinsă.
 
 | Laborant  | Link template                                |
 |-----------|----------------------------------------------|
