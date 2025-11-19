@@ -369,7 +369,7 @@ public:
 
 
 int main() {
-    std::string filename = "citire.txt";
+    std::string filename = "banca_si_meniu.txt";
     std::ifstream in(filename);
 
     std::string bancaNume = "Banca";
@@ -553,7 +553,6 @@ int main() {
             }
         }
 
-        in.close();
     }
 
 
@@ -561,39 +560,19 @@ int main() {
 
 
     int opt = -1;
-    while (opt != 0) {
-        std::cout << "\n Meniu \n";
-        std::cout << "1. Detalii banca \n";
-        std::cout << "2. Transfer intre conturi \n";
-        std::cout << "3. Cere un credit \n";
-        std::cout << "0. Iesire\n";
-        std::cout << " waiting for input: ";
-        if (!(std::cin >> opt)) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            opt = -1;
-            continue;
-        }
-
+    while (in >> opt) {
         if (opt == 1) {
             std::cout << banca << "\n";
         } else if (opt == 2) {
             std::string ibanS, ibanD;
             double suma;
-            std::cout << "IBAN sursa: "; std::cin >> ibanS;
-            std::cout << "IBAN destinatie: "; std::cin >> ibanD;
-            std::cout << "Suma (RON): "; std::cin >> suma;
+            in >> ibanS >> ibanD >> suma;
             banca.transfer(ibanS, ibanD, suma);
         } else if (opt == 3) {
             std::string cnp;
             double suma;
             int luni;
-            std::cout << "Introdu CNP: ";
-            std::cin >> cnp;
-            std::cout << "Suma credit dorita: ";
-            std::cin >> suma;
-            std::cout << "Numar luni: ";
-            std::cin >> luni;
+            in >> cnp >> suma >> luni;
             bool gasit = false;
             for (const auto &cl: clienti) {
                 if (cl.getCNP() == cnp) {
@@ -603,16 +582,17 @@ int main() {
                 }
             }
             if (!gasit) {
-                std::cout << "Client cu CNP '" << cnp << "' nu a fost gasit in datele citite.\n";
+                std::cout << "Client cu CNP '" << cnp << "' nu a fost gasit.\n";
             }
-
-        }  else if (opt == 0) {
+        } else if (opt == 0) {
             std::cout << "Iesire...\n";
+            break;
         } else {
             std::cout << "Optiune invalida.\n";
         }
     }
 
+    in.close();
     return 0;
 }
 
