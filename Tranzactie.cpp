@@ -26,7 +26,6 @@ Tranzactie &Tranzactie::operator=(const Tranzactie &tr) {
 
 Tranzactie::~Tranzactie() {
     std::cout << "(Tranzactie) Destructor\n";
-
 }
 
 std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {

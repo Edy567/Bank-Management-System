@@ -11,8 +11,11 @@ class Moneda {
 
 public:
     Moneda(std::string cod, std::string nume, const double &cursValutar);
+
     Moneda(const Moneda &other);
+
     Moneda &operator=(const Moneda &other);
+
     ~Moneda();
 
     [[nodiscard]] std::string getCod() const { return cod; }

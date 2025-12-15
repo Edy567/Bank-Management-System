@@ -14,17 +14,22 @@
 class Eroare : public std::exception {
 protected:
     std::string mesaj;
+
 public:
-    explicit Eroare(const std::string &msg) : mesaj("Eroare : " + msg) {}
-    [[nodiscard]] const char* what() const noexcept override { return mesaj.c_str(); }
+    explicit Eroare(const std::string &msg) : mesaj("Eroare : " + msg) {
+    }
+
+    [[nodiscard]] const char *what() const noexcept override { return mesaj.c_str(); }
 };
 
 class FonduriInsuficiente : public Eroare {
 public:
-    explicit FonduriInsuficiente() : Eroare("Fonduri insuficiente pentru aceasta operatiune!") {}
+    explicit FonduriInsuficiente() : Eroare("Fonduri insuficiente pentru aceasta operatiune!") {
+    }
 };
 
 class LimitaCarduriDepasita : public Eroare {
 public:
-    LimitaCarduriDepasita() : Eroare("S-a atins limita maxima de carduri admisa pentru acest tip de cont!") {}
+    LimitaCarduriDepasita() : Eroare("S-a atins limita maxima de carduri admisa pentru acest tip de cont!") {
+    }
 };

@@ -8,11 +8,13 @@
 #include "Cont.h"
 
 class ContPremium : public Cont {
-
-    public:
+public:
     explicit ContPremium(const std::vector<Card> &carduri, std::string IBAN, const std::vector<Tranzactie> &tranzactii);
-    [[nodiscard]] ContPremium* clone() const override;
+
+    [[nodiscard]] ContPremium *clone() const override;
+
     [[nodiscard]] double calculeazaComision(double suma) const override;
+
 protected:
     void afisareDetaliata(std::ostream &os) const override;
 };

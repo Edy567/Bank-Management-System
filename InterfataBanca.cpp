@@ -8,11 +8,12 @@
 #include <cmath>
 #include <algorithm>
 
-bool isHover(const sf::FloatRect& rect, const sf::Vector2f mousePos) {
+bool isHover(const sf::FloatRect &rect, const sf::Vector2f mousePos) {
     return rect.contains(mousePos);
 }
 
-UI_Banca::UI_Banca(Banca& b) : banca(b), clientLogat(nullptr), stareCurenta(AppState::LOGIN),  loginFocus(0), focusIndex(0) {
+UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppState::LOGIN), loginFocus(0),
+                               focusIndex(0) {
     window.create(sf::VideoMode({800, 900}), "George Banking App", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
 
@@ -24,7 +25,7 @@ UI_Banca::UI_Banca(Banca& b) : banca(b), clientLogat(nullptr), stareCurenta(AppS
     }
 }
 
-void UI_Banca::incarcaDate(const std::string& path) const {
+void UI_Banca::incarcaDate(const std::string &path) const {
     std::ifstream fin(path);
     if (!fin.is_open()) {
         std::cerr << "EROARE: Nu pot deschide fisierul: " << path << std::endl;
@@ -44,14 +45,14 @@ void UI_Banca::incarcaDate(const std::string& path) const {
                 std::ranges::replace(n, '_', ' ');
                 banca.adaugaAngajat(Angajat(n, id, s));
             }
-        }
-        else if (buffer == "CLIENTI") {
+        } else if (buffer == "CLIENTI") {
             int nrClienti;
             fin >> nrClienti;
             std::cout << "--- DEBUG: Incarc " << nrClienti << " clienti ---" << std::endl;
             for (int i = 0; i < nrClienti; ++i) {
                 std::string numeComplet, cnp, parola;
-                double venit; int scor;
+                double venit;
+                int scor;
 
                 fin >> numeComplet >> cnp >> parola >> venit >> scor;
                 std::ranges::replace(numeComplet, '_', ' ');
@@ -62,12 +63,12 @@ void UI_Banca::incarcaDate(const std::string& path) const {
                 Client temp(nume, prenume, cnp, parola, venit, scor);
 
                 std::cout << "Client incarcat: " << nume << " " << prenume
-                          << " | USER LOGIN: " << nume
-                          << " | PAROLA: " << parola << std::endl;
+                        << " | USER LOGIN: " << nume
+                        << " | PAROLA: " << parola << std::endl;
 
                 int nrConturi;
                 fin >> nrConturi;
-                for(int j = 0; j < nrConturi; ++j) {
+                for (int j = 0; j < nrConturi; ++j) {
                     std::string tipCont, iban;
                     int limita;
                     fin >> tipCont >> iban >> limita;
@@ -76,7 +77,7 @@ void UI_Banca::incarcaDate(const std::string& path) const {
 
                     int nrCarduri;
                     fin >> nrCarduri;
-                    for(int k = 0; k < nrCarduri; ++k) {
+                    for (int k = 0; k < nrCarduri; ++k) {
                         double s, curs;
                         std::string tit, exp, nr, mc, mn;
                         fin >> s >> tit >> exp >> nr >> mc >> mn >> curs;
@@ -84,7 +85,7 @@ void UI_Banca::incarcaDate(const std::string& path) const {
                         cards.emplace_back(s, tit, exp, nr, Moneda(mc, mn, curs));
                     }
 
-                    Cont* ptr = nullptr;
+                    Cont *ptr = nullptr;
                     if (tipCont == "SILVER") ptr = new ContSilver(cards, iban, tr);
                     else if (tipCont == "GOLD") ptr = new ContGold(cards, iban, tr);
                     else if (tipCont == "PREMIUM") ptr = new ContPremium(cards, iban, tr);
@@ -104,7 +105,7 @@ void UI_Banca::incarcaDateDeTest() const {
     std::vector<Card> carduri1;
     carduri1.emplace_back(1000, "Visa Classic", "12/26", "40001234", Moneda("RON", "Leu", 1));
     std::vector<Tranzactie> tr1;
-    Cont* cont1 = new ContSilver(carduri1, "RO10BTRL001", tr1);
+    Cont *cont1 = new ContSilver(carduri1, "RO10BTRL001", tr1);
     c1.adaugaCont(cont1);
     banca.adaugaClient(c1);
 
@@ -112,51 +113,53 @@ void UI_Banca::incarcaDateDeTest() const {
     std::vector<Card> carduri2;
     carduri2.emplace_back(10000, "MasterCard Gold", "01/28", "50001234", Moneda("RON", "Leu", 1));
     std::vector<Tranzactie> tr2;
-    Cont* cont2 = new ContGold(carduri2, "RO99BTRL002", tr2);
+    Cont *cont2 = new ContGold(carduri2, "RO99BTRL002", tr2);
     c2.adaugaCont(cont2);
     std::vector<Card> carduri3;
     carduri3.emplace_back(50000, "Visa Infinite", "05/30", "60009999", Moneda("RON", "Leu", 1));
     std::vector<Tranzactie> tr3;
-    Cont* cont3 = new ContPremium(carduri3, "RO55BTRL003", tr3);
+    Cont *cont3 = new ContPremium(carduri3, "RO55BTRL003", tr3);
     c2.adaugaCont(cont3);
     banca.adaugaClient(c2);
 }
 
-void UI_Banca::run(const std::string& fisierDate) {
+void UI_Banca::run(const std::string &fisierDate) {
     incarcaDate(fisierDate);
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) window.close();
-            else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
+            else if (const auto *key = event->getIf<sf::Event::KeyPressed>()) {
                 if (key->scancode == sf::Keyboard::Scancode::Escape && stareCurenta != AppState::LOGIN) {
                     stareCurenta = AppState::DASHBOARD;
-                    inputBuffer.clear(); infoMesaj.clear();
+                    inputBuffer.clear();
+                    infoMesaj.clear();
                 }
-            }
-            else if (const auto* txt = event->getIf<sf::Event::TextEntered>()) {
+            } else if (const auto *txt = event->getIf<sf::Event::TextEntered>()) {
                 if (stareCurenta == AppState::LOGIN) handleLoginInput(*txt);
                 else if (stareCurenta == AppState::TRANSFER) handleTransferInput(*txt);
                 else if (stareCurenta == AppState::CREDIT_SIMULATOR) {
                     if (txt->unicode == '\b') {
                         if (!inputBuffer.empty()) inputBuffer.pop_back();
-                    }
-                    else if ((txt->unicode >= '0' && txt->unicode <= '9') || txt->unicode == '.') {
+                    } else if ((txt->unicode >= '0' && txt->unicode <= '9') || txt->unicode == '.') {
                         inputBuffer += static_cast<char>(txt->unicode);
                     }
                 }
-            }
-            else if (const auto* ms = event->getIf<sf::Event::MouseButtonPressed>()) {
+            } else if (const auto *ms = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (ms->button == sf::Mouse::Button::Left)
                     processClick(sf::Vector2f(static_cast<float>(ms->position.x), static_cast<float>(ms->position.y)));
             }
         }
         window.clear(sf::Color(240, 240, 245));
         switch (stareCurenta) {
-            case AppState::LOGIN: drawLogin(); break;
-            case AppState::DASHBOARD: drawDashboard(); break;
-            case AppState::TRANSFER: drawTransfer(); break;
-            case AppState::CREDIT_SIMULATOR: drawCredit(); break;
+            case AppState::LOGIN: drawLogin();
+                break;
+            case AppState::DASHBOARD: drawDashboard();
+                break;
+            case AppState::TRANSFER: drawTransfer();
+                break;
+            case AppState::CREDIT_SIMULATOR: drawCredit();
+                break;
         }
         window.display();
     }
@@ -224,7 +227,7 @@ void UI_Banca::drawLogin() {
 }
 
 void UI_Banca::drawDashboard() {
-    if(!clientLogat) return;
+    if (!clientLogat) return;
 
     sf::RectangleShape header(sf::Vector2f(800.f, 80.f));
     header.setFillColor(georgeBlue);
@@ -246,33 +249,33 @@ void UI_Banca::drawDashboard() {
     window.draw(txtOut);
 
     float yStart = 100.f;
-    auto& conturi = clientLogat->getConturi();
+    auto &conturi = clientLogat->getConturi();
 
-    if(conturi.empty()) {
+    if (conturi.empty()) {
         sf::Text gol(font, "Nu ai niciun cont activ.", 20);
         gol.setFillColor(sf::Color::Black);
         gol.setPosition(sf::Vector2f(50.f, 150.f));
         window.draw(gol);
     }
 
-    for (auto* c : conturi) {
+    for (auto *c: conturi) {
         std::string tipCont = "Standard";
         auto culoareCont = sf::Color(200, 200, 200);
 
-        if (dynamic_cast<ContSilver*>(c)) {
+        if (dynamic_cast<ContSilver *>(c)) {
             tipCont = "SILVER";
             culoareCont = sf::Color(192, 192, 192);
-        } else if (dynamic_cast<ContGold*>(c)) {
+        } else if (dynamic_cast<ContGold *>(c)) {
             tipCont = "GOLD";
             culoareCont = sf::Color(255, 215, 0);
-        } else if (dynamic_cast<ContPremium*>(c)) {
+        } else if (dynamic_cast<ContPremium *>(c)) {
             tipCont = "PREMIUM";
             culoareCont = sf::Color(50, 50, 50);
         }
 
         size_t nrCarduri = c->getCarduri().size();
         float inaltimeBox = 70.f + (static_cast<float>(nrCarduri) * 30.f);
-        if(inaltimeBox < 120.f) inaltimeBox = 120.f;
+        if (inaltimeBox < 120.f) inaltimeBox = 120.f;
 
         sf::RectangleShape cardBg(sf::Vector2f(740.f, inaltimeBox));
         cardBg.setPosition(sf::Vector2f(30.f, yStart));
@@ -300,10 +303,10 @@ void UI_Banca::drawDashboard() {
 
         float yCard = yStart + 65.f;
 
-        for(const auto& card : c->getCarduri()) {
+        for (const auto &card: c->getCarduri()) {
             std::string cardInfo = card.getTitular();
             cardInfo += " (";
-            cardInfo += card.getNrCard().substr(0,4);
+            cardInfo += card.getNrCard().substr(0, 4);
             cardInfo += "****)";
 
             sf::Text txtCardInfo(font, cardInfo, 16);
@@ -403,9 +406,9 @@ void UI_Banca::drawTransfer() {
     back.setFillColor(sf::Color(100, 100, 100));
     back.setPosition(sf::Vector2f(50.f, 750.f));
     window.draw(back);
-    if(!infoMesaj.empty()) {
+    if (!infoMesaj.empty()) {
         sf::Text info(font, infoMesaj, 18);
-        if(infoMesaj.find("Succes") != std::string::npos) info.setFillColor(sf::Color::Green);
+        if (infoMesaj.find("Succes") != std::string::npos) info.setFillColor(sf::Color::Green);
         else info.setFillColor(sf::Color::Red);
         info.setPosition(sf::Vector2f(300.f, 330.f));
         window.draw(info);
@@ -443,7 +446,7 @@ void UI_Banca::drawCredit() {
     txtCalc.setPosition(sf::Vector2f(90.f, 262.f));
     window.draw(txtCalc);
 
-    if(!infoMesaj.empty()) {
+    if (!infoMesaj.empty()) {
         sf::Text res(font, infoMesaj, 18);
         res.setFillColor(georgeBlue);
         res.setPosition(sf::Vector2f(50.f, 350.f));
@@ -456,28 +459,24 @@ void UI_Banca::drawCredit() {
     window.draw(back);
 }
 
-void UI_Banca::handleLoginInput(const sf::Event::TextEntered& e) {
-    std::string* target = (loginFocus == 0) ? &bufferNume : &bufferParola;
+void UI_Banca::handleLoginInput(const sf::Event::TextEntered &e) {
+    std::string *target = (loginFocus == 0) ? &bufferNume : &bufferParola;
     if (e.unicode == '\t') {
         loginFocus = (loginFocus + 1) % 2;
-    }
-    else if (e.unicode == '\b') {
+    } else if (e.unicode == '\b') {
         if (!target->empty()) target->pop_back();
-    }
-    else if (e.unicode == '\r' || e.unicode == '\n') {
+    } else if (e.unicode == '\r' || e.unicode == '\n') {
         processClick(sf::Vector2f(260.f, 390.f));
-    }
-    else if (e.unicode >= 32 && e.unicode < 128) {
+    } else if (e.unicode >= 32 && e.unicode < 128) {
         *target += static_cast<char>(e.unicode);
     }
 }
 
-void UI_Banca::handleTransferInput(const sf::Event::TextEntered& e) {
-    std::string* t = (focusIndex == 0) ? &transferIbanDest : &transferSuma;
+void UI_Banca::handleTransferInput(const sf::Event::TextEntered &e) {
+    std::string *t = (focusIndex == 0) ? &transferIbanDest : &transferSuma;
     if (e.unicode == '\b') {
         if (!t->empty()) t->pop_back();
-    }
-    else if (e.unicode == '\t') focusIndex = !focusIndex;
+    } else if (e.unicode == '\t') focusIndex = !focusIndex;
     else if (e.unicode >= 32 && e.unicode < 128) {
         *t += static_cast<char>(e.unicode);
     }
@@ -491,23 +490,30 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         if (sf::FloatRect({250.f, 325.f}, {300.f, 40.f}).contains(pos)) loginFocus = 1;
 
         if (sf::FloatRect({250.f, 380.f}, {300.f, 50.f}).contains(pos)) {
-            if (auto* c = banca.autentificareClient(bufferNume, bufferParola)) {
+            if (auto *c = banca.autentificareClient(bufferNume, bufferParola)) {
                 clientLogat = c;
                 stareCurenta = AppState::DASHBOARD;
-                bufferNume.clear(); bufferParola.clear(); mesajEroare.clear();
+                bufferNume.clear();
+                bufferParola.clear();
+                mesajEroare.clear();
             } else mesajEroare = "User sau Parola gresita!";
         }
-    }
-    else if (stareCurenta == AppState::DASHBOARD) {
-        if (x >= 700 && x <= 780 && y >= 25 && y <= 55) { clientLogat = nullptr;
-        stareCurenta = AppState::LOGIN; }
+    } else if (stareCurenta == AppState::DASHBOARD) {
+        if (x >= 700 && x <= 780 && y >= 25 && y <= 55) {
+            clientLogat = nullptr;
+            stareCurenta = AppState::LOGIN;
+        }
 
-        if (x >= 50 && x <= 250 && y >= 820 && y <= 870) { stareCurenta = AppState::TRANSFER;
-        infoMesaj = ""; }
-        if (x >= 300 && x <= 500 && y >= 820 && y <= 870) { stareCurenta = AppState::CREDIT_SIMULATOR;
-        inputBuffer = ""; infoMesaj = ""; }
-    }
-    else if (stareCurenta == AppState::TRANSFER) {
+        if (x >= 50 && x <= 250 && y >= 820 && y <= 870) {
+            stareCurenta = AppState::TRANSFER;
+            infoMesaj = "";
+        }
+        if (x >= 300 && x <= 500 && y >= 820 && y <= 870) {
+            stareCurenta = AppState::CREDIT_SIMULATOR;
+            inputBuffer = "";
+            infoMesaj = "";
+        }
+    } else if (stareCurenta == AppState::TRANSFER) {
         if (sf::FloatRect({50.f, 130.f}, {400.f, 40.f}).contains(pos)) focusIndex = 0;
         if (sf::FloatRect({50.f, 230.f}, {200.f, 40.f}).contains(pos)) focusIndex = 1;
 
@@ -524,7 +530,7 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             std::cout << "IBAN Trimis la Banca: '" << destinatarCurat << "'" << std::endl;
 
             int sumaDeTrimis = 0;
-            try { sumaDeTrimis = std::stoi(transferSuma); } catch(...) {
+            try { sumaDeTrimis = std::stoi(transferSuma); } catch (...) {
                 infoMesaj = "Eroare: Suma invalida!";
                 return;
             }
@@ -532,21 +538,21 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             bool transferReusit = false;
             bool fonduriGasite = false;
 
-            for(const auto* contSursa : clientLogat->getConturi()) {
-                if(contSursa->getSoldTotal() >= sumaDeTrimis) {
+            for (const auto *contSursa: clientLogat->getConturi()) {
+                if (contSursa->getSoldTotal() >= sumaDeTrimis) {
                     fonduriGasite = true;
                     std::cout << "Incerc transfer din contul: " << contSursa->getIBAN() << std::endl;
-                    if(banca.transfer(contSursa->getIBAN(), destinatarCurat, sumaDeTrimis)) {
+                    if (banca.transfer(contSursa->getIBAN(), destinatarCurat, sumaDeTrimis)) {
                         transferReusit = true;
                         break;
                     } else {
                         std::cout << "Banca a refuzat transferul."
-                        << std::endl;
+                                << std::endl;
                     }
                 }
             }
 
-            if(transferReusit) {
+            if (transferReusit) {
                 infoMesaj = "Succes! ";
                 infoMesaj += std::to_string(sumaDeTrimis);
                 infoMesaj += " RON trimisi.";
@@ -555,17 +561,17 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
                 else infoMesaj = "Eroare: Destinatar invalid sau eroare sistem.";
             }
         }
-    }
-    else if (stareCurenta == AppState::CREDIT_SIMULATOR) {
+    } else if (stareCurenta == AppState::CREDIT_SIMULATOR) {
         if (x >= 50 && x <= 250 && y >= 250 && y <= 300) {
             double v = 0;
-            try { v = std::stod(inputBuffer); } catch(...) {}
+            try { v = std::stod(inputBuffer); } catch (...) {
+            }
             infoMesaj = clientLogat->credit(v, 12);
         }
     }
 }
 
-void UI_Banca::centerText(sf::Text& t, float y) {
+void UI_Banca::centerText(sf::Text &t, float y) {
     const auto r = t.getLocalBounds();
     t.setOrigin(r.position + r.size / 2.f);
     t.setPosition(sf::Vector2f(400.f, y));

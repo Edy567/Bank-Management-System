@@ -14,43 +14,51 @@ enum class AppState {
 
 class UI_Banca {
 private:
-    Banca& banca;
-    Client* clientLogat;
+    Banca &banca;
+    Client *clientLogat;
     sf::RenderWindow window;
     sf::Font font;
     AppState stareCurenta;
-    
+
     std::string bufferNume;
     std::string bufferParola;
-    int loginFocus; 
+    int loginFocus;
 
-    std::string inputBuffer; 
+    std::string inputBuffer;
     std::string mesajEroare;
     std::string infoMesaj;
-    
+
     std::string transferIbanDest;
     std::string transferSuma;
     int focusIndex;
 
 
     void drawLogin();
+
     void drawDashboard();
+
     void drawTransfer();
+
     void drawCredit();
 
-    void handleLoginInput(const sf::Event::TextEntered& textEvent);
-    void handleTransferInput(const sf::Event::TextEntered& textEvent);
+    void handleLoginInput(const sf::Event::TextEntered &textEvent);
+
+    void handleTransferInput(const sf::Event::TextEntered &textEvent);
 
     void processClick(const sf::Vector2f &pos);
 
-    static void centerText(sf::Text& text, float y);
-    void incarcaDate(const std::string& path) const;
+    static void centerText(sf::Text &text, float y);
+
+    void incarcaDate(const std::string &path) const;
+
     void incarcaDateDeTest() const;
 
     sf::Color georgeBlue = sf::Color(20, 72, 158);
     sf::Color georgeCyan = sf::Color(0, 195, 255);
+
 public:
-    explicit UI_Banca(Banca& b);
-    void run(const std::string& fisierDate);
+    explicit UI_Banca(Banca &b);
+
+    void run(const std::string &fisierDate);
 };
 #endif
