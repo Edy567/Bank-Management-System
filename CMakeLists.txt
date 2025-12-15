@@ -58,6 +58,29 @@ endif()
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
+        Moneda.h
+        Moneda.cpp
+        Card.h
+        Card.cpp
+        Tranzactie.h
+        Cont.h
+        Client.h
+        Angajat.h
+        Banca.h
+        Tranzactie.cpp
+        Cont.cpp
+        Client.cpp
+        Angajat.cpp
+        Banca.cpp
+        Cont_Silver.h
+        Cont_Gold.h
+        Cont_premium.h
+        Cont_Silver.cpp
+        Exceptii.h
+        Cont_Gold.cpp
+        Cont_premium.cpp
+        InterfataBanca.h
+        InterfataBanca.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -91,5 +114,6 @@ endif()
 
 
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(FILES banca_si_meniu.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
