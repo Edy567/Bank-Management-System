@@ -2,6 +2,7 @@
 #include "Cont_Silver.h"
 #include "Cont_Gold.h"
 #include "Cont_premium.h"
+#include "Exceptii.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,10 +17,11 @@ UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppS
                                focusIndex(0) {
     window.create(sf::VideoMode({800, 900}), "George Banking App", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
+    transferMoneda = "RON";
 
     if (!font.openFromFile("arial.ttf")) {
         if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-            std::cerr << "EROARE: Nu gasesc arial.ttf! Asigura-te ca fisierul exista.\n";
+            std::cerr << "Eroare.\n";
             exit(1);
         }
     }
@@ -48,7 +50,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
         } else if (buffer == "CLIENTI") {
             int nrClienti;
             fin >> nrClienti;
-            std::cout << "--- DEBUG: Incarc " << nrClienti << " clienti ---" << std::endl;
+            std::cout << "DEBUG: Incarc " << nrClienti << " clienti " << std::endl;
             for (int i = 0; i < nrClienti; ++i) {
                 std::string numeComplet, cnp, parola;
                 double venit;
@@ -62,9 +64,9 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
                 Client temp(nume, prenume, cnp, parola, venit, scor);
 
-                std::cout << "Client incarcat: " << nume << " " << prenume
-                        << " | USER LOGIN: " << nume
-                        << " | PAROLA: " << parola << std::endl;
+                std::cout << "Client : " << nume << " " << prenume
+                        << "  User: " << nume
+                        << "  Parola: " << parola << std::endl;
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -376,7 +378,7 @@ void UI_Banca::drawTransfer() {
     txtDest.setPosition(sf::Vector2f(60.f, 138.f));
     window.draw(txtDest);
 
-    sf::Text lblSuma(font, "Suma (RON):", 18);
+    sf::Text lblSuma(font, "Suma:", 18);
     lblSuma.setFillColor(sf::Color::Black);
     lblSuma.setPosition(sf::Vector2f(50.f, 200.f));
     window.draw(lblSuma);
@@ -393,6 +395,27 @@ void UI_Banca::drawTransfer() {
     txtSuma.setPosition(sf::Vector2f(60.f, 238.f));
     window.draw(txtSuma);
 
+    sf::Text lblMoneda(font, "Moneda:", 18);
+    lblMoneda.setFillColor(sf::Color::Black);
+    lblMoneda.setPosition(sf::Vector2f(270.f, 200.f));
+    window.draw(lblMoneda);
+
+    sf::RectangleShape btnMoneda(sf::Vector2f(100.f, 40.f));
+    btnMoneda.setPosition(sf::Vector2f(270.f, 230.f));
+    btnMoneda.setFillColor(sf::Color(220, 220, 220));
+    btnMoneda.setOutlineColor(georgeBlue);
+    btnMoneda.setOutlineThickness(2.f);
+    window.draw(btnMoneda);
+
+    sf::Text txtMoneda(font, transferMoneda, 20);
+    txtMoneda.setFillColor(georgeBlue);
+    txtMoneda.setStyle(sf::Text::Bold);
+    auto r = txtMoneda.getLocalBounds();
+    txtMoneda.setOrigin(r.position + r.size / 2.f);
+    txtMoneda.setPosition(sf::Vector2f(320.f, 250.f));
+    window.draw(txtMoneda);
+
+
     sf::RectangleShape btnSend(sf::Vector2f(200.f, 50.f));
     btnSend.setPosition(sf::Vector2f(50.f, 320.f));
     btnSend.setFillColor(georgeBlue);
@@ -402,7 +425,7 @@ void UI_Banca::drawTransfer() {
     txtSend.setStyle(sf::Text::Bold);
     txtSend.setPosition(sf::Vector2f(100.f, 332.f));
     window.draw(txtSend);
-    sf::Text back(font, "ESC - Inapoi la Dashboard", 15);
+    sf::Text back(font, "esc -> Inapoi la Dashboard", 15);
     back.setFillColor(sf::Color(100, 100, 100));
     back.setPosition(sf::Vector2f(50.f, 750.f));
     window.draw(back);
@@ -453,7 +476,7 @@ void UI_Banca::drawCredit() {
         window.draw(res);
     }
 
-    sf::Text back(font, "ESC - Inapoi", 15);
+    sf::Text back(font, "esc -> Inapoi", 15);
     back.setFillColor(sf::Color::Black);
     back.setPosition(sf::Vector2f(50.f, 750.f));
     window.draw(back);
@@ -517,6 +540,13 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         if (sf::FloatRect({50.f, 130.f}, {400.f, 40.f}).contains(pos)) focusIndex = 0;
         if (sf::FloatRect({50.f, 230.f}, {200.f, 40.f}).contains(pos)) focusIndex = 1;
 
+        if (sf::FloatRect({270.f, 230.f}, {100.f, 40.f}).contains(pos)) {
+            if (transferMoneda == "RON") transferMoneda = "EUR";
+            else if (transferMoneda == "EUR") transferMoneda = "GBP";
+            else if (transferMoneda == "GBP") transferMoneda = "USD";
+            else transferMoneda = "RON";
+        }
+
         if (x >= 50 && x <= 250 && y >= 320 && y <= 370) {
             if (clientLogat->getConturi().empty()) {
                 infoMesaj = "Eroare: Nu ai conturi!";
@@ -525,40 +555,42 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
             std::string destinatarCurat = transferIbanDest;
             std::erase(destinatarCurat, ' ');
-            std::cout << "--- DEBUG TRANSFER ---" << std::endl;
-            std::cout << "IBAN UI (raw): '" << transferIbanDest << "'" << std::endl;
+            std::cout << "DEBUG TRANSFER " << std::endl;
+            std::cout << "IBAN original: '" << transferIbanDest << "'" << std::endl;
             std::cout << "IBAN Trimis la Banca: '" << destinatarCurat << "'" << std::endl;
 
-            int sumaDeTrimis = 0;
-            try { sumaDeTrimis = std::stoi(transferSuma); } catch (...) {
+            double sumaDeTrimis = 0;
+            try {
+                sumaDeTrimis = std::stod(transferSuma);
+            } catch (...) {
                 infoMesaj = "Eroare: Suma invalida!";
                 return;
             }
 
             bool transferReusit = false;
-            bool fonduriGasite = false;
+            std::string ultimaEroare;
 
             for (const auto *contSursa: clientLogat->getConturi()) {
-                if (contSursa->getSoldTotal() >= sumaDeTrimis) {
-                    fonduriGasite = true;
-                    std::cout << "Incerc transfer din contul: " << contSursa->getIBAN() << std::endl;
-                    if (banca.transfer(contSursa->getIBAN(), destinatarCurat, sumaDeTrimis)) {
-                        transferReusit = true;
-                        break;
-                    } else {
-                        std::cout << "Banca a refuzat transferul."
-                                << std::endl;
-                    }
+                try {
+                    banca.transfer(contSursa->getIBAN(), destinatarCurat, sumaDeTrimis, transferMoneda);
+                    transferReusit = true;
+                    break;
+                } catch (const Eroare &e) {
+                    ultimaEroare = e.what();
+                } catch (const std::exception &e) {
+                    ultimaEroare = e.what();
                 }
             }
 
             if (transferReusit) {
                 infoMesaj = "Succes! ";
-                infoMesaj += std::to_string(sumaDeTrimis);
-                infoMesaj += " RON trimisi.";
+                infoMesaj += transferSuma;
+                infoMesaj += " ";
+                infoMesaj += transferMoneda;
+                infoMesaj += " trimisi.";
             } else {
-                if (!fonduriGasite) infoMesaj = "Eroare: Fonduri insuficiente.";
-                else infoMesaj = "Eroare: Destinatar invalid sau eroare sistem.";
+                if (!ultimaEroare.empty()) infoMesaj = ultimaEroare;
+                else infoMesaj = "Eroare: Fonduri insuficiente sau cont invalid.";
             }
         }
     } else if (stareCurenta == AppState::CREDIT_SIMULATOR) {

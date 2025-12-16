@@ -1,5 +1,6 @@
 #ifndef OOP_BANCA_H
 #define OOP_BANCA_H
+
 #pragma once
 #include <vector>
 #include <string>
@@ -13,16 +14,18 @@ class Banca {
     std::vector<Angajat> angajati;
 
 public:
-    Banca(std::string nume, std::vector<Client> clienti, std::vector<Angajat> angajati);
+    Banca(std::string numeBanca, std::vector<Client> clienti, std::vector<Angajat> angajati);
 
-    void adaugaClient(const Client &c);
+    void adaugaClient(const Client& c);
+    void adaugaAngajat(const Angajat& a);
 
-    void adaugaAngajat(const Angajat &a);
+    Client* getClient(const std::string& cnp);
+    Client* autentificareClient(const std::string& nume, const std::string& parola);
 
-    Client *autentificareClient(const std::string &nume, const std::string &parola);
-
-    bool transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, int suma);
+    // Modificat pentru a accepta moneda
+    void transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda);
 
     friend std::ostream &operator<<(std::ostream &os, const Banca &banca);
 };
-#endif
+
+#endif //OOP_BANCA_H
