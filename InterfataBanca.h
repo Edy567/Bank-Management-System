@@ -49,14 +49,19 @@ private:
     void drawDashboard();
     void drawTransfer();
     void drawCredit();
+
     void drawExchange();
+
     void drawBills();
+
     void drawAdmin();
 
     void handleLoginInput(const sf::Event::TextEntered& textEvent);
     void handleTransferInput(const sf::Event::TextEntered& textEvent);
-    void handleExchangeInput(const sf::Event::TextEntered& textEvent);
-    void handleBillsInput(const sf::Event::TextEntered& textEvent);
+
+    void handleExchangeInput(const sf::Event::TextEntered &textEvent);
+
+    void handleBillsInput(const sf::Event::TextEntered &textEvent);
 
     void processClick(const sf::Vector2f &pos);
 

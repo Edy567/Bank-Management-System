@@ -76,7 +76,7 @@ void Cont::adaugaSuma(const double suma, const std::string &moneda) {
 
 double Cont::getSoldTotal() const {
     double total = 0;
-    for(const auto &c: carduri) total += c.getSuma();
+    for (const auto &c: carduri) total += c.getSuma();
     return total;
 }
 
