@@ -23,24 +23,31 @@ public:
     Cont &operator=(const Cont &other);
     virtual ~Cont();
 
-    [[nodiscard]] virtual Cont* clone() const = 0;
+    [[nodiscard]] virtual Cont *clone() const = 0;
+
     [[nodiscard]] virtual double calculeazaComision(double suma) const = 0;
 
     friend std::ostream &operator<<(std::ostream &os, const Cont &cont);
 
     [[nodiscard]] const std::string &getIBAN() const;
-    [[nodiscard]] const std::vector<Card>& getCarduri() const;
-    [[nodiscard]] const std::vector<Tranzactie>& getTranzactii() const;
+
+    [[nodiscard]] const std::vector<Card> &getCarduri() const;
+
+    [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const;
 
 
-    bool retrageSuma(double suma, const std::string& moneda);
-    void adaugaSuma(double suma, const std::string& moneda);
+    bool retrageSuma(double suma, const std::string &moneda);
+
+    void adaugaSuma(double suma, const std::string &moneda);
 
     [[nodiscard]] double getSoldTotal() const;
-    [[nodiscard]] double getSoldValuta(const std::string& moneda) const;
-    [[nodiscard]] bool areCardInValuta(const std::string& moneda) const;
 
-    void adaugaTranzactie(const Tranzactie& t);
+    [[nodiscard]] double getSoldValuta(const std::string &moneda) const;
+
+    [[nodiscard]] bool areCardInValuta(const std::string &moneda) const;
+
+    void adaugaTranzactie(const Tranzactie &t);
+
     bool adaugaCard(const Card &card);
 };
 

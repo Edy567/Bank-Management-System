@@ -9,7 +9,10 @@ enum class AppState {
     LOGIN,
     DASHBOARD,
     TRANSFER,
-    CREDIT_SIMULATOR
+    CREDIT_SIMULATOR,
+    EXCHANGE,
+    BILLS,
+    ADMIN
 };
 
 class UI_Banca {
@@ -31,6 +34,14 @@ private:
     std::string transferIbanDest;
     std::string transferSuma;
     std::string transferMoneda;
+
+    std::string exchangeSuma;
+    std::string exchangeMonedaSursa;
+    std::string exchangeMonedaDest;
+
+    std::string billSuma;
+    std::string billFurnizor;
+
     int focusIndex;
 
 
@@ -38,15 +49,20 @@ private:
     void drawDashboard();
     void drawTransfer();
     void drawCredit();
+    void drawExchange();
+    void drawBills();
+    void drawAdmin();
 
     void handleLoginInput(const sf::Event::TextEntered& textEvent);
     void handleTransferInput(const sf::Event::TextEntered& textEvent);
+    void handleExchangeInput(const sf::Event::TextEntered& textEvent);
+    void handleBillsInput(const sf::Event::TextEntered& textEvent);
 
     void processClick(const sf::Vector2f &pos);
 
     static void centerText(sf::Text& text, float y);
     void incarcaDate(const std::string& path) const;
-    void incarcaDateDeTest() const;
+
 
     sf::Color georgeBlue = sf::Color(20, 72, 158);
     sf::Color georgeCyan = sf::Color(0, 195, 255);
