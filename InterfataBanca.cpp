@@ -9,9 +9,7 @@
 #include <cmath>
 #include <algorithm>
 
-bool isHover(const sf::FloatRect &rect, const sf::Vector2f mousePos) {
-    return rect.contains(mousePos);
-}
+
 
 std::string trim(const std::string &str) {
     size_t first = str.find_first_not_of(' ');

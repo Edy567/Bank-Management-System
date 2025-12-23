@@ -33,14 +33,14 @@ public:
 
     [[nodiscard]] const std::vector<Card> &getCarduri() const;
 
-    [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const;
+   // [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const;
 
 
     bool retrageSuma(double suma, const std::string &moneda);
 
     void adaugaSuma(double suma, const std::string &moneda);
 
-    [[nodiscard]] double getSoldTotal() const;
+ //   [[nodiscard]] double getSoldTotal() const;
 
     [[nodiscard]] double getSoldValuta(const std::string &moneda) const;
 
@@ -48,7 +48,7 @@ public:
 
     void adaugaTranzactie(const Tranzactie &t);
 
-    bool adaugaCard(const Card &card);
+    //bool adaugaCard(const Card &card);
 };
 
 #endif //OOP_CONT_H

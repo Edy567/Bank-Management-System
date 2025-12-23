@@ -1,18 +1,18 @@
 #include "Tranzactie.h"
 #include <utility>
 
-int Tranzactie::nrTranzactii = 0;
+//int Tranzactie::nrTranzactii = 0;
 
 Tranzactie::Tranzactie(const int &sum, std::string descriere)
     : descriere{std::move(descriere)}, suma{sum} {
     std::cout << "(Tranzactie) Constructor parametrizat\n";
-    Tranzactie::nrTranzactii++;
+  //  Tranzactie::nrTranzactii++;
 }
 
 Tranzactie::Tranzactie(const Tranzactie &tr)
     : descriere{tr.descriere}, suma{tr.suma} {
     std::cout << "(Tranzactie) Constructor de copiere\n";
-    Tranzactie::nrTranzactii++;
+    // Tranzactie::nrTranzactii++;
 }
 
 Tranzactie &Tranzactie::operator=(const Tranzactie &tr) {

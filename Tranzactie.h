@@ -13,7 +13,7 @@
 class Tranzactie {
     std::string descriere;
     int suma;
-    static int nrTranzactii;
+   // static int nrTranzactii;
 
 public:
     Tranzactie(const int &sum, std::string descriere);
@@ -26,5 +26,5 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Tranzactie &tr);
 
-    static int getTotal() { return nrTranzactii; }
+    //static int getTotal() { return nrTranzactii; }
 };

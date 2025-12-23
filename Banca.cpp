@@ -15,12 +15,7 @@ void Banca::adaugaAngajat(const Angajat& a) {
     angajati.push_back(a);
 }
 
-Client* Banca::getClient(const std::string& cnp) {
-    for(auto& c : clienti) {
-        if(c.getCNP() == cnp) return &c;
-    }
-    return nullptr;
-}
+
 
 Client* Banca::autentificareClient(const std::string& numeUtilizator, const std::string& parolaUtilizator) {
     for(auto& c : clienti) {
@@ -146,17 +141,17 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
 
 void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string& furnizor) {
     Cont* cont = nullptr;
-    for (auto &client : clienti) {
-        for (auto *c : client.getConturi()) {
+    for (auto &client: clienti) {
+        for (auto *c: client.getConturi()) {
             if (c->getIBAN() == ibanCont) {
                 cont = c;
                 break;
             }
         }
     }
-    if(!cont) throw Eroare("Cont invalid.");
+    if (!cont) throw Eroare("Cont invalid.");
 
-    if(!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
+    if (!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
     if(cont->getSoldValuta("RON") < suma) throw FonduriInsuficiente();
 
     if(cont->retrageSuma(suma, "RON")) {

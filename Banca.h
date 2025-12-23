@@ -19,17 +19,17 @@ public:
     void adaugaClient(const Client& c);
     void adaugaAngajat(const Angajat& a);
 
-    Client* getClient(const std::string& cnp);
     Client* autentificareClient(const std::string& nume, const std::string& parola);
 
     void transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda);
 
 
-    static void schimbValutar(Client* client, double sumaSursa, const std::string& monedaSursa, const std::string& monedaDestinatie);
+    static void schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
+                              const std::string &monedaDestinatie);
 
-    void platesteFactura(const std::string& ibanCont, double suma, const std::string& furnizor);
+    void platesteFactura(const std::string &ibanCont, double suma, const std::string &furnizor);
 
-    const std::vector<Client>& getClienti() const { return clienti; }
+    const std::vector<Client> &getClienti() const { return clienti; }
 
     friend std::ostream &operator<<(std::ostream &os, const Banca &banca);
 };
