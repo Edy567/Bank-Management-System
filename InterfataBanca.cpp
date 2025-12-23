@@ -13,9 +13,18 @@ bool isHover(const sf::FloatRect &rect, const sf::Vector2f mousePos) {
     return rect.contains(mousePos);
 }
 
+std::string trim(const std::string& str) {
+    size_t first = str.find_first_not_of(' ');
+    if (std::string::npos == first) {
+        return str;
+    }
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
+
 UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppState::LOGIN), loginFocus(0),
                                focusIndex(0) {
-    window.create(sf::VideoMode({800, 900}), "Masonerie SRL", sf::Style::Titlebar | sf::Style::Close);
+    window.create(sf::VideoMode({800, 900}), "George Banking App", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
     transferMoneda = "RON";
     exchangeMonedaSursa = "RON";
@@ -33,7 +42,7 @@ UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppS
 void UI_Banca::incarcaDate(const std::string &path) const {
     std::ifstream fin(path);
     if (!fin.is_open()) {
-        std::cerr << "Eroare." << std::endl;
+        std::cerr << "EROARE: Nu pot deschide fisierul: " << path << std::endl;
         return;
     }
 
@@ -113,10 +122,17 @@ void UI_Banca::run(const std::string &fisierDate) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) window.close();
             else if (const auto *key = event->getIf<sf::Event::KeyPressed>()) {
-                if (key->scancode == sf::Keyboard::Scancode::Escape && stareCurenta != AppState::LOGIN) {
-                    stareCurenta = AppState::DASHBOARD;
-                    inputBuffer.clear();
-                    infoMesaj.clear();
+                if (key->scancode == sf::Keyboard::Scancode::Escape) {
+                    if (stareCurenta == AppState::ADMIN) {
+                         stareCurenta = AppState::LOGIN;
+                         bufferNume.clear();
+                         bufferParola.clear();
+                    }
+                    else if (stareCurenta != AppState::LOGIN) {
+                        stareCurenta = AppState::DASHBOARD;
+                        inputBuffer.clear();
+                        infoMesaj.clear();
+                    }
                 }
             } else if (const auto *txt = event->getIf<sf::Event::TextEntered>()) {
                 if (stareCurenta == AppState::LOGIN) handleLoginInput(*txt);
@@ -150,9 +166,8 @@ void UI_Banca::run(const std::string &fisierDate) {
 }
 
 void UI_Banca::drawLogin() {
-    sf::Text logo(font, "Masonerie Popesti-Leordeni", 50);
-
-    logo.setFillColor(georgeBlue);
+    sf::Text logo(font, "George", 70);
+    logo.setFillColor(blue);
     logo.setStyle(sf::Text::Bold);
     centerText(logo, 150.f);
     window.draw(logo);
@@ -169,7 +184,7 @@ void UI_Banca::drawLogin() {
 
     sf::RectangleShape boxNume(sf::Vector2f(360.f, 50.f));
     boxNume.setFillColor(sf::Color::White);
-    boxNume.setOutlineColor(loginFocus == 0 ? georgeCyan : sf::Color(200, 200, 200));
+    boxNume.setOutlineColor(loginFocus == 0 ? cyan : sf::Color(200, 200, 200));
     boxNume.setOutlineThickness(2.f);
     boxNume.setPosition(sf::Vector2f(220.f, 300.f));
     window.draw(boxNume);
@@ -186,7 +201,7 @@ void UI_Banca::drawLogin() {
 
     sf::RectangleShape boxPass(sf::Vector2f(360.f, 50.f));
     boxPass.setFillColor(sf::Color::White);
-    boxPass.setOutlineColor(loginFocus == 1 ? georgeCyan : sf::Color(200, 200, 200));
+    boxPass.setOutlineColor(loginFocus == 1 ? cyan : sf::Color(200, 200, 200));
     boxPass.setOutlineThickness(2.f);
     boxPass.setPosition(sf::Vector2f(220.f, 400.f));
     window.draw(boxPass);
@@ -198,7 +213,7 @@ void UI_Banca::drawLogin() {
     window.draw(txtPass);
 
     sf::RectangleShape btn(sf::Vector2f(360.f, 60.f));
-    btn.setFillColor(georgeBlue);
+    btn.setFillColor(blue);
     btn.setPosition(sf::Vector2f(220.f, 500.f));
     window.draw(btn);
 
@@ -222,7 +237,7 @@ void UI_Banca::drawDashboard() {
     if (!clientLogat) return;
 
     sf::RectangleShape header(sf::Vector2f(800.f, 100.f));
-    header.setFillColor(georgeBlue);
+    header.setFillColor(blue);
     window.draw(header);
 
     std::string salutText = "Salut, ";
@@ -287,7 +302,7 @@ void UI_Banca::drawDashboard() {
 
         std::string ibanText = c->getIBAN();
         sf::Text ibanTxt(font, ibanText, 22);
-        ibanTxt.setFillColor(georgeBlue);
+        ibanTxt.setFillColor(blue);
         ibanTxt.setStyle(sf::Text::Bold);
         ibanTxt.setPosition(sf::Vector2f(55.f, yStart + 45.f));
         window.draw(ibanTxt);
@@ -308,7 +323,7 @@ void UI_Banca::drawDashboard() {
             s = s.substr(0, s.find('.') + 3);
             std::string valuta = card.getMoneda().getCod();
 
-            std::string sumaText = s + " " += valuta;
+            std::string sumaText = s + " " + valuta;
 
             sf::Text txtSuma(font, sumaText, 18);
             txtSuma.setFillColor(sf::Color::Black);
@@ -326,7 +341,7 @@ void UI_Banca::drawDashboard() {
 
     sf::RectangleShape btnTrans(sf::Vector2f(160.f, 50.f));
     btnTrans.setPosition(sf::Vector2f(40.f, footerY));
-    btnTrans.setFillColor(georgeCyan);
+    btnTrans.setFillColor(cyan);
     window.draw(btnTrans);
 
     sf::Text txtTrans(font, "Transfer", 16);
@@ -337,7 +352,7 @@ void UI_Banca::drawDashboard() {
 
     sf::RectangleShape btnEx(sf::Vector2f(160.f, 50.f));
     btnEx.setPosition(sf::Vector2f(220.f, footerY));
-    btnEx.setFillColor(georgeBlue);
+    btnEx.setFillColor(blue);
     window.draw(btnEx);
 
     sf::Text txtEx(font, "Schimb", 16);
@@ -359,7 +374,7 @@ void UI_Banca::drawDashboard() {
 
     sf::RectangleShape btnCredit(sf::Vector2f(160.f, 50.f));
     btnCredit.setPosition(sf::Vector2f(580.f, footerY));
-    btnCredit.setFillColor(georgeBlue);
+    btnCredit.setFillColor(blue);
     window.draw(btnCredit);
 
     sf::Text txtCred(font, "Credit", 16);
@@ -371,7 +386,7 @@ void UI_Banca::drawDashboard() {
 
 void UI_Banca::drawTransfer() {
     sf::Text title(font, "Transfer", 32);
-    title.setFillColor(georgeBlue);
+    title.setFillColor(blue);
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
@@ -384,7 +399,7 @@ void UI_Banca::drawTransfer() {
     sf::RectangleShape boxDest(sf::Vector2f(400.f, 50.f));
     boxDest.setPosition(sf::Vector2f(200.f, 210.f));
     boxDest.setFillColor(sf::Color::White);
-    boxDest.setOutlineColor(focusIndex == 0 ? georgeCyan : sf::Color(200, 200, 200));
+    boxDest.setOutlineColor(focusIndex == 0 ? cyan : sf::Color(200, 200, 200));
     boxDest.setOutlineThickness(2.f);
     window.draw(boxDest);
 
@@ -401,7 +416,7 @@ void UI_Banca::drawTransfer() {
     sf::RectangleShape boxSuma(sf::Vector2f(280.f, 50.f));
     boxSuma.setPosition(sf::Vector2f(200.f, 330.f));
     boxSuma.setFillColor(sf::Color::White);
-    boxSuma.setOutlineColor(focusIndex == 1 ? georgeCyan : sf::Color(200, 200, 200));
+    boxSuma.setOutlineColor(focusIndex == 1 ? cyan : sf::Color(200, 200, 200));
     boxSuma.setOutlineThickness(2.f);
     window.draw(boxSuma);
 
@@ -413,12 +428,12 @@ void UI_Banca::drawTransfer() {
     sf::RectangleShape btnMoneda(sf::Vector2f(100.f, 50.f));
     btnMoneda.setPosition(sf::Vector2f(500.f, 330.f));
     btnMoneda.setFillColor(sf::Color(230, 230, 230));
-    btnMoneda.setOutlineColor(georgeBlue);
+    btnMoneda.setOutlineColor(blue);
     btnMoneda.setOutlineThickness(2.f);
     window.draw(btnMoneda);
 
     sf::Text txtMoneda(font, transferMoneda, 20);
-    txtMoneda.setFillColor(georgeBlue);
+    txtMoneda.setFillColor(blue);
     txtMoneda.setStyle(sf::Text::Bold);
     auto r = txtMoneda.getLocalBounds();
     txtMoneda.setOrigin(r.position + r.size / 2.f);
@@ -427,7 +442,7 @@ void UI_Banca::drawTransfer() {
 
     sf::RectangleShape btnSend(sf::Vector2f(400.f, 60.f));
     btnSend.setPosition(sf::Vector2f(200.f, 450.f));
-    btnSend.setFillColor(georgeBlue);
+    btnSend.setFillColor(blue);
     window.draw(btnSend);
 
     sf::Text txtSend(font, "TRIMITE BANII", 20);
@@ -454,7 +469,7 @@ void UI_Banca::drawTransfer() {
 
 void UI_Banca::drawExchange() {
     sf::Text title(font, "Schimb Valutar", 32);
-    title.setFillColor(georgeBlue);
+    title.setFillColor(blue);
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
@@ -467,7 +482,7 @@ void UI_Banca::drawExchange() {
     sf::RectangleShape boxSuma(sf::Vector2f(400.f, 50.f));
     boxSuma.setPosition(sf::Vector2f(200.f, 210.f));
     boxSuma.setFillColor(sf::Color::White);
-    boxSuma.setOutlineColor(georgeCyan);
+    boxSuma.setOutlineColor(cyan);
     boxSuma.setOutlineThickness(2.f);
     window.draw(boxSuma);
 
@@ -498,7 +513,7 @@ void UI_Banca::drawExchange() {
 
     sf::RectangleShape btnSchimb(sf::Vector2f(400.f, 60.f));
     btnSchimb.setPosition(sf::Vector2f(200.f, 400.f));
-    btnSchimb.setFillColor(georgeBlue);
+    btnSchimb.setFillColor(blue);
     window.draw(btnSchimb);
 
     sf::Text txtSchimb(font, "EFECTUEAZA SCHIMB", 20);
@@ -525,7 +540,7 @@ void UI_Banca::drawExchange() {
 
 void UI_Banca::drawBills() {
     sf::Text title(font, "Plata Facturi", 32);
-    title.setFillColor(georgeBlue);
+    title.setFillColor(blue);
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
@@ -553,7 +568,7 @@ void UI_Banca::drawBills() {
     sf::RectangleShape boxS(sf::Vector2f(400.f, 50.f));
     boxS.setPosition(sf::Vector2f(200.f, 330.f));
     boxS.setFillColor(sf::Color::White);
-    boxS.setOutlineColor(georgeCyan);
+    boxS.setOutlineColor(cyan);
     boxS.setOutlineThickness(2.f);
     window.draw(boxS);
 
@@ -564,7 +579,7 @@ void UI_Banca::drawBills() {
 
     sf::RectangleShape btnPay(sf::Vector2f(400.f, 60.f));
     btnPay.setPosition(sf::Vector2f(200.f, 450.f));
-    btnPay.setFillColor(georgeBlue);
+    btnPay.setFillColor(blue);
     window.draw(btnPay);
 
     sf::Text txtPay(font, "PLATESTE", 20);
@@ -624,7 +639,7 @@ void UI_Banca::drawAdmin() {
 
 void UI_Banca::drawCredit() {
     sf::Text title(font, "Simulator Credit", 32);
-    title.setFillColor(georgeBlue);
+    title.setFillColor(blue);
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
@@ -637,7 +652,7 @@ void UI_Banca::drawCredit() {
     sf::RectangleShape box(sf::Vector2f(400.f, 50.f));
     box.setPosition(sf::Vector2f(200.f, 230.f));
     box.setFillColor(sf::Color::White);
-    box.setOutlineColor(georgeCyan);
+    box.setOutlineColor(cyan);
     box.setOutlineThickness(2.f);
     window.draw(box);
 
@@ -648,7 +663,7 @@ void UI_Banca::drawCredit() {
 
     sf::RectangleShape btnCalc(sf::Vector2f(400.f, 60.f));
     btnCalc.setPosition(sf::Vector2f(200.f, 350.f));
-    btnCalc.setFillColor(georgeBlue);
+    btnCalc.setFillColor(blue);
     window.draw(btnCalc);
 
     sf::Text txtCalc(font, "CALCULEAZA ELIGIBILITATE", 20);
@@ -661,7 +676,7 @@ void UI_Banca::drawCredit() {
 
     if (!infoMesaj.empty()) {
         sf::Text res(font, infoMesaj, 18);
-        res.setFillColor(georgeBlue);
+        res.setFillColor(blue);
         centerText(res, 500.f);
         window.draw(res);
     }
@@ -681,7 +696,11 @@ void UI_Banca::handleLoginInput(const sf::Event::TextEntered &e) {
     } else if (e.unicode == '\r' || e.unicode == '\n') {
         processClick(sf::Vector2f(400.f, 530.f));
     } else if (e.unicode >= 32 && e.unicode < 128) {
-        *target += static_cast<char>(e.unicode);
+        char c = static_cast<char>(e.unicode);
+        if (loginFocus == 1 && c == ' ') {
+            return;
+        }
+        *target += c;
     }
 }
 
@@ -706,7 +725,7 @@ void UI_Banca::handleExchangeInput(const sf::Event::TextEntered &e) {
 void UI_Banca::handleBillsInput(const sf::Event::TextEntered &e) {
     if (e.unicode == '\b') {
         if (!billSuma.empty()) billSuma.pop_back();
-    } else if ( (e.unicode >= '0' && e.unicode <= '9') || e.unicode == '.') {
+    } else if ((e.unicode >= '0' && e.unicode <= '9') || e.unicode == '.') {
         billSuma += static_cast<char>(e.unicode);
     }
 }
@@ -720,14 +739,17 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         if (sf::FloatRect({220.f, 400.f}, {360.f, 50.f}).contains(pos)) loginFocus = 1;
 
         if (sf::FloatRect({220.f, 500.f}, {360.f, 60.f}).contains(pos)) {
-            if (bufferNume == "admin" && bufferParola == "admin") {
+            std::string user = trim(bufferNume);
+            std::string pass = trim(bufferParola);
+
+            if (user == "admin" && pass == "admin") {
                 stareCurenta = AppState::ADMIN;
                 bufferNume.clear();
                 bufferParola.clear();
                 return;
             }
 
-            if (auto *c = banca.autentificareClient(bufferNume, bufferParola)) {
+            if (auto *c = banca.autentificareClient(user, pass)) {
                 clientLogat = c;
                 stareCurenta = AppState::DASHBOARD;
                 bufferNume.clear();
@@ -739,6 +761,8 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         if (x >= 680 && x <= 780 && y >= 30 && y <= 60) {
             clientLogat = nullptr;
             stareCurenta = AppState::LOGIN;
+            bufferNume.clear();
+            bufferParola.clear();
         }
 
         if (x >= 40 && x <= 200 && y >= 780 && y <= 830) {
@@ -833,11 +857,10 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             double s = 0;
             try { s = std::stod(exchangeSuma); } catch(...) { infoMesaj = "Suma invalida"; return; }
 
-            if(clientLogat->getConturi().empty()) return;
-            std::string iban = clientLogat->getConturi()[0]->getIBAN();
+            if(!clientLogat || clientLogat->getConturi().empty()) return;
 
             try {
-                banca.schimbValutar(iban, s, exchangeMonedaSursa, exchangeMonedaDest);
+                banca.schimbValutar(clientLogat, s, exchangeMonedaSursa, exchangeMonedaDest);
                 infoMesaj = "Schimb reusit!";
             } catch(const std::exception& e) {
                 infoMesaj = e.what();
@@ -867,8 +890,10 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         }
 
     } else if (stareCurenta == AppState::ADMIN) {
-        if (x >= 700) {
-            stareCurenta = AppState::LOGIN;
+        if (y >= 830 && y <= 870 && x >= 300 && x <= 500) {
+             stareCurenta = AppState::LOGIN;
+             bufferNume.clear();
+             bufferParola.clear();
         }
     } else if (stareCurenta == AppState::CREDIT_SIMULATOR) {
         if (sf::FloatRect({200.f, 350.f}, {400.f, 60.f}).contains(pos)) {
