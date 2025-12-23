@@ -11,7 +11,7 @@
 
 
 
-std::string trim(const std::string &str) {
+std::string trim(const std::string& str) {
     size_t first = str.find_first_not_of(' ');
     if (std::string::npos == first) {
         return str;
@@ -122,10 +122,11 @@ void UI_Banca::run(const std::string &fisierDate) {
             else if (const auto *key = event->getIf<sf::Event::KeyPressed>()) {
                 if (key->scancode == sf::Keyboard::Scancode::Escape) {
                     if (stareCurenta == AppState::ADMIN) {
-                        stareCurenta = AppState::LOGIN;
-                        bufferNume.clear();
-                        bufferParola.clear();
-                    } else if (stareCurenta != AppState::LOGIN) {
+                         stareCurenta = AppState::LOGIN;
+                         bufferNume.clear();
+                         bufferParola.clear();
+                    }
+                    else if (stareCurenta != AppState::LOGIN) {
                         stareCurenta = AppState::DASHBOARD;
                         inputBuffer.clear();
                         infoMesaj.clear();
@@ -317,7 +318,7 @@ void UI_Banca::drawDashboard() {
             window.draw(txtCardInfo);
 
             std::string s = std::to_string(card.getSuma());
-            s = s.substr(0, s.find('.') + 3);
+            s.resize(s.find('.') + 3);
             std::string valuta = card.getMoneda().getCod();
 
             std::string sumaText = s + " " + valuta;
@@ -888,9 +889,9 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
     } else if (stareCurenta == AppState::ADMIN) {
         if (y >= 830 && y <= 870 && x >= 300 && x <= 500) {
-            stareCurenta = AppState::LOGIN;
-            bufferNume.clear();
-            bufferParola.clear();
+             stareCurenta = AppState::LOGIN;
+             bufferNume.clear();
+             bufferParola.clear();
         }
     } else if (stareCurenta == AppState::CREDIT_SIMULATOR) {
         if (sf::FloatRect({200.f, 350.f}, {400.f, 60.f}).contains(pos)) {
