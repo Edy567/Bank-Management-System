@@ -71,26 +71,33 @@ void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestin
     }
 }
 
-void Banca::schimbValutar(const std::string &ibanCont, double sumaSursa, const std::string &monedaSursa,
+void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
                           const std::string &monedaDestinatie) {
-    Cont *cont = nullptr;
-    for (auto &client: clienti) {
-        for (auto *c: client.getConturi()) {
-            if (c->getIBAN() == ibanCont) {
-                cont = c;
+    Cont *contSursa = nullptr;
+    Cont *contDestinatie = nullptr;
+
+
+    for (auto *c: client->getConturi()) {
+        if (c->areCardInValuta(monedaSursa)) {
+            if (c->getSoldValuta(monedaSursa) >= sumaSursa) {
+                contSursa = c;
                 break;
             }
         }
     }
 
-    if (!cont) throw Eroare("Cont invalid.");
-    if (!cont->areCardInValuta(monedaSursa)) throw Eroare("Nu aveti card in " + monedaSursa);
-    if (!cont->areCardInValuta(monedaDestinatie)) throw Eroare("Nu aveti card in " + monedaDestinatie);
 
-    if (cont->getSoldValuta(monedaSursa) < sumaSursa) throw FonduriInsuficiente();
+    for (auto *c: client->getConturi()) {
+        if (c->areCardInValuta(monedaDestinatie)) {
+            contDestinatie = c;
+            break;
+        }
+    }
 
+    if (!contSursa) throw Eroare("Fonduri insuficiente sau lipsa card in " + monedaSursa);
+    if (!contDestinatie) throw Eroare("Nu detineti niciun card in " + monedaDestinatie + " pentru a primi banii.");
 
-    auto getID = [](const std::string &m) -> int {
+    auto getID = [](const std::string& m) -> int {
         if (m == "RON") return 1;
         if (m == "EUR") return 2;
         if (m == "USD") return 3;
@@ -98,10 +105,8 @@ void Banca::schimbValutar(const std::string &ibanCont, double sumaSursa, const s
         return 0;
     };
 
-    const int idS = getID(monedaSursa);
-    const int idD = getID(monedaDestinatie);
-
-
+    int idS = getID(monedaSursa);
+    int idD = getID(monedaDestinatie);
     int cheie = idS * 10 + idD;
     double rata;
 
@@ -110,53 +115,51 @@ void Banca::schimbValutar(const std::string &ibanCont, double sumaSursa, const s
             break;
         case 21: rata = 4.97;
             break;
-
         case 13: rata = 0.21;
             break;
         case 31: rata = 4.60;
             break;
-
         case 14: rata = 0.17;
             break;
         case 41: rata = 5.80;
             break;
-
         case 23: rata = 1.08;
             break;
         case 32: rata = 0.92;
             break;
-
         default: rata = 1.0;
             break;
     }
 
     double sumaDestinatie = sumaSursa * rata;
 
-    if (cont->retrageSuma(sumaSursa, monedaSursa)) {
-        cont->adaugaSuma(sumaDestinatie, monedaDestinatie);
-        cont->adaugaTranzactie(Tranzactie(-static_cast<int>(sumaSursa), "ies bani" + monedaSursa));
-        cont->adaugaTranzactie(Tranzactie(static_cast<int>(sumaDestinatie), "intra bani" + monedaDestinatie));
+    if (contSursa->retrageSuma(sumaSursa, monedaSursa)) {
+        contDestinatie->adaugaSuma(sumaDestinatie, monedaDestinatie);
+
+        contSursa->adaugaTranzactie(Tranzactie(-static_cast<int>(sumaSursa), "Schimb valutar OUT " + monedaSursa));
+        contDestinatie->adaugaTranzactie(Tranzactie(static_cast<int>(sumaDestinatie),
+                                                    "Schimb valutar IN " + monedaDestinatie));
     } else {
         throw Eroare("Eroare la procesarea schimbului.");
     }
 }
 
-void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string &furnizor) {
-    Cont *cont = nullptr;
-    for (auto &client: clienti) {
-        for (auto *c: client.getConturi()) {
+void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string& furnizor) {
+    Cont* cont = nullptr;
+    for (auto &client : clienti) {
+        for (auto *c : client.getConturi()) {
             if (c->getIBAN() == ibanCont) {
                 cont = c;
                 break;
             }
         }
     }
-    if (!cont) throw Eroare("Cont invalid.");
+    if(!cont) throw Eroare("Cont invalid.");
 
-    if (!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
-    if (cont->getSoldValuta("RON") < suma) throw FonduriInsuficiente();
+    if(!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
+    if(cont->getSoldValuta("RON") < suma) throw FonduriInsuficiente();
 
-    if (cont->retrageSuma(suma, "RON")) {
+    if(cont->retrageSuma(suma, "RON")) {
         cont->adaugaTranzactie(Tranzactie(-static_cast<int>(suma), "Plata factura: " + furnizor));
     }
 }

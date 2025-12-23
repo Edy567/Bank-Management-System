@@ -24,14 +24,14 @@ public:
 
     void transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda);
 
-    void schimbValutar(const std::string &ibanCont, double sumaSursa, const std::string &monedaSursa,
-                       const std::string &monedaDestinatie);
 
-    void platesteFactura(const std::string &ibanCont, double suma, const std::string &furnizor);
+    static void schimbValutar(Client* client, double sumaSursa, const std::string& monedaSursa, const std::string& monedaDestinatie);
 
-    [[nodiscard]] const std::vector<Client> &getClienti() const { return clienti; }
+    void platesteFactura(const std::string& ibanCont, double suma, const std::string& furnizor);
+
+    const std::vector<Client>& getClienti() const { return clienti; }
 
     friend std::ostream &operator<<(std::ostream &os, const Banca &banca);
 };
 
-#endif //OOP_BANCA_H
+#endif

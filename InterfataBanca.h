@@ -69,8 +69,8 @@ private:
     void incarcaDate(const std::string& path) const;
 
 
-    sf::Color georgeBlue = sf::Color(20, 72, 158);
-    sf::Color georgeCyan = sf::Color(0, 195, 255);
+    sf::Color blue = sf::Color(20, 72, 158);
+    sf::Color cyan = sf::Color(0, 195, 255);
 public:
     explicit UI_Banca(Banca& b);
     void run(const std::string& fisierDate);
