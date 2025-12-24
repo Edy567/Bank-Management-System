@@ -37,8 +37,8 @@ std::ostream &operator<<(std::ostream &os, const Card &card) {
 
 double Card::getSuma() const { return suma; }
 const Moneda &Card::getMoneda() const { return moneda; }
-std::string Card::getTitular() const { return titular; }
-std::string Card::getNrCard() const { return nrCard; }
+const std::string& Card::getTitular() const { return titular; }
+const std::string& Card::getNrCard() const { return nrCard; }
 
 void Card::scadeSuma(double valoare) { suma -= valoare; }
 void Card::adaugaSuma(double valoare) { suma += valoare; }

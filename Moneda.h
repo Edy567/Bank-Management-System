@@ -18,7 +18,7 @@ public:
 
     ~Moneda();
 
-    [[nodiscard]]  const std::string& getCod() const { return cod; }
+    [[nodiscard]] const std::string &getCod() const { return cod; }
 
     friend std::ostream &operator<<(std::ostream &os, const Moneda &moneda);
 };
