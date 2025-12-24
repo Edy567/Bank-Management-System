@@ -16,3 +16,4 @@ class ContGold : public Cont {
 protected:
     void afisareDetaliata(std::ostream &os) const override;
 };
+
