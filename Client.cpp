@@ -37,7 +37,7 @@ Client::~Client() {
 std::ostream &operator<<(std::ostream &os, const Client &c) {
     os << c.nume << " " << c.prenume << " " << c.CNP << " " << c.venit << " " << c.scorCredit;
     os << "Conturi:\n";
-    for (const auto &cont: c.conturi) {
+    for (const auto *cont: c.conturi) {
         os << cont << "\n";
     }
     return os;

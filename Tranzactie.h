@@ -13,7 +13,7 @@
 class Tranzactie {
     std::string descriere;
     int suma;
-   // static int nrTranzactii;
+    // static int nrTranzactii;
 
 public:
     Tranzactie(const int &sum, std::string descriere);

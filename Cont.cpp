@@ -75,9 +75,9 @@ void Cont::adaugaSuma(const double suma, const std::string &moneda) {
 }
 
 //double Cont::getSoldTotal() const {
-  //  double total = 0;
-   // for (const auto &c: carduri) total += c.getSuma();
-   // return total;
+//  double total = 0;
+// for (const auto &c: carduri) total += c.getSuma();
+// return total;
 //}
 
 double Cont::getSoldValuta(const std::string &moneda) const {
@@ -95,12 +95,12 @@ bool Cont::areCardInValuta(const std::string &moneda) const {
 }
 
 //bool Cont::adaugaCard(const Card &card) {
-    //if (static_cast<int>(carduri.size()) >= limitaCarduri) {
-       // std::cout << "Eroare : limita de carduri a fost depasita!";
-     //   return false;
-   // }
-    //carduri.push_back(card);
-  //  return true;
+//if (static_cast<int>(carduri.size()) >= limitaCarduri) {
+// std::cout << "Eroare : limita de carduri a fost depasita!";
+//   return false;
+// }
+//carduri.push_back(card);
+//  return true;
 //}
 
 void Cont::adaugaTranzactie(const Tranzactie &t) {

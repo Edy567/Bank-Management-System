@@ -28,9 +28,9 @@ public:
 
     [[nodiscard]] const Moneda &getMoneda() const;
 
-    [[nodiscard]] std::string getTitular() const;
+    [[nodiscard]] const std::string &getTitular() const;
 
-    [[nodiscard]] std::string getNrCard() const;
+    [[nodiscard]] const std::string& getNrCard() const;
 
     void scadeSuma(double valoare);
 

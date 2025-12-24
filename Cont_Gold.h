@@ -5,11 +5,8 @@
 #ifndef OOP_CONT_GOLD_H
 #define OOP_CONT_GOLD_H
 
-#endif //OOP_CONT_GOLD_H
-
 #include "Cont.h"
-
-
+#endif //OOP_CONT_GOLD_H
 class ContGold : public Cont {
 
     public:

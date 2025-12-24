@@ -3,9 +3,8 @@
 #ifndef OOP_CONT_PREMIUM_H
 #define OOP_CONT_PREMIUM_H
 
-#endif //OOP_CONT_PREMIUM_H
-
 #include "Cont.h"
+#endif //OOP_CONT_PREMIUM_H
 
 class ContPremium : public Cont {
 public:

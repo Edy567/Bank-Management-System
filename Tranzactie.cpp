@@ -6,7 +6,7 @@
 Tranzactie::Tranzactie(const int &sum, std::string descriere)
     : descriere{std::move(descriere)}, suma{sum} {
     std::cout << "(Tranzactie) Constructor parametrizat\n";
-  //  Tranzactie::nrTranzactii++;
+    //  Tranzactie::nrTranzactii++;
 }
 
 Tranzactie::Tranzactie(const Tranzactie &tr)

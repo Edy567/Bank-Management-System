@@ -11,7 +11,7 @@
 
 
 
-std::string trim(const std::string& str) {
+std::string trim(const std::string &str) {
     size_t first = str.find_first_not_of(' ');
     if (std::string::npos == first) {
         return str;
@@ -122,11 +122,10 @@ void UI_Banca::run(const std::string &fisierDate) {
             else if (const auto *key = event->getIf<sf::Event::KeyPressed>()) {
                 if (key->scancode == sf::Keyboard::Scancode::Escape) {
                     if (stareCurenta == AppState::ADMIN) {
-                         stareCurenta = AppState::LOGIN;
-                         bufferNume.clear();
-                         bufferParola.clear();
-                    }
-                    else if (stareCurenta != AppState::LOGIN) {
+                        stareCurenta = AppState::LOGIN;
+                        bufferNume.clear();
+                        bufferParola.clear();
+                    } else if (stareCurenta != AppState::LOGIN) {
                         stareCurenta = AppState::DASHBOARD;
                         inputBuffer.clear();
                         infoMesaj.clear();

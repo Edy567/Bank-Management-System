@@ -16,7 +16,6 @@ void Banca::adaugaAngajat(const Angajat& a) {
 }
 
 
-
 Client* Banca::autentificareClient(const std::string& numeUtilizator, const std::string& parolaUtilizator) {
     for(auto& c : clienti) {
         if(c.getNume() == numeUtilizator && c.verificaParola(parolaUtilizator)) {
@@ -126,9 +125,9 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
             break;
     }
 
-    double sumaDestinatie = sumaSursa * rata;
 
     if (contSursa->retrageSuma(sumaSursa, monedaSursa)) {
+        double sumaDestinatie = sumaSursa * rata;
         contDestinatie->adaugaSuma(sumaDestinatie, monedaDestinatie);
 
         contSursa->adaugaTranzactie(Tranzactie(-static_cast<int>(sumaSursa), "Schimb valutar OUT " + monedaSursa));
