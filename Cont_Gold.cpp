@@ -2,7 +2,7 @@
 // Created by User on 12/2/2025.
 //
 #include "Cont_Gold.h"
-#include "utility"
+
 
 ContGold::ContGold(const std::vector<Card> &carduri, std::string IBAN,
                    const std::vector<Tranzactie> &tranzactii) : Cont(carduri, std::move(IBAN), tranzactii, 5) {
