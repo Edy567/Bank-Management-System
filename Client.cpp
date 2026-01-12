@@ -39,11 +39,11 @@ Client &Client::operator=(const Client &other) {
 }
 
 Client::~Client() {
-    for (const auto* cont : conturi) {
+    for (auto* cont : conturi) {
         delete cont;
     }
     conturi.clear();
-    std::cout << "(Client) Destructor\n";
+    std::cout << "[Client] Destructor\n";
 }
 
 std::ostream &operator<<(std::ostream &os, const Client &c) {
@@ -57,11 +57,11 @@ std::ostream &operator<<(std::ostream &os, const Client &c) {
 
 std::vector<Cont *> &Client::getConturi() { return conturi; }
 
-void Client::adaugaCont(Cont *c) {
+[[maybe_unused]] void Client::adaugaCont(Cont *c) {
     conturi.push_back(c);
 }
 
-std::string Client::credit(const double suma, int luni) const {
+[[maybe_unused]] std::string Client::credit(const double suma, int luni) const {
     const double rata = (suma / luni) * 1.05;
     double raport = rata / venit;
 
@@ -75,5 +75,5 @@ std::string Client::credit(const double suma, int luni) const {
 
 const std::string &Client::getCNP() const { return CNP; }
 const std::string &Client::getNume() const { return nume; }
-const std::string &Client::getPrenume() const { return prenume; }
+[[maybe_unused]] const std::string &Client::getPrenume() const { return prenume; }
 bool Client::verificaParola(const std::string &p) const { return parola == p; }
