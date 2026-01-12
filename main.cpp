@@ -1,7 +1,7 @@
 
 #include <vector>
-#include "Banca.h"     // [cite: 85]
-#include "InterfataBanca.h"  // Header-ul interfetei grafice
+#include "Banca.h"
+#include "InterfataBanca.h"
 
 int main() {
     std::vector<Client> clienti;

@@ -17,26 +17,21 @@ class Client {
 
 public:
     friend void swap(Client &first, Client &second) noexcept;
-
     explicit Client(std::string nume, std::string prenume, std::string CNP, std::string parola,
                     const double &venit, const int &scorCredit);
 
     Client(const Client &other);
-
-    Client &operator=(Client &&other) noexcept;
-
+    Client &operator=(const Client &other);
     ~Client();
 
     friend std::ostream &operator<<(std::ostream &os, const Client &c);
 
     [[nodiscard]] std::vector<Cont *> &getConturi();
-
     [[nodiscard]] std::string credit(double suma, int luni) const;
 
     [[nodiscard]] const std::string &getCNP() const;
 
     [[nodiscard]] const std::string &getNume() const;
-
     [[nodiscard]] const std::string &getPrenume() const;
 
     [[nodiscard]] bool verificaParola(const std::string &p) const;

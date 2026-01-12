@@ -10,7 +10,11 @@ Client::Client(std::string nume, std::string prenume, std::string CNP, std::stri
 
 Client::Client(const Client &other)
     : nume{other.nume}, prenume{other.prenume}, CNP{other.CNP}, parola{other.parola},
-      conturi{other.conturi}, venit{other.venit}, scorCredit{other.scorCredit} {
+      venit{other.venit}, scorCredit{other.scorCredit} {
+
+    for (const auto* cont : other.conturi) {
+        conturi.push_back(cont->clone());
+    }
     std::cout << "(Client) Constructor de copiere\n";
 }
 
@@ -25,13 +29,21 @@ void swap(Client &first, Client &second) noexcept {
     swap(first.scorCredit, second.scorCredit);
 }
 
-Client &Client::operator=(Client &&other) noexcept {
-    swap(*this, other);
+Client &Client::operator=(const Client &other) {
+    if (this != &other) {
+        Client temp(other);
+        swap(*this, temp);
+    }
+    std::cout << "(Client) Operator= apelat\n";
     return *this;
 }
 
 Client::~Client() {
-    std::cout << "[Client] Destructor\n";
+    for (const auto* cont : conturi) {
+        delete cont;
+    }
+    conturi.clear();
+    std::cout << "(Client) Destructor\n";
 }
 
 std::ostream &operator<<(std::ostream &os, const Client &c) {

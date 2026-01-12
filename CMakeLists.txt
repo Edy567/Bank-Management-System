@@ -81,6 +81,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Cont_premium.cpp
         InterfataBanca.h
         InterfataBanca.cpp
+        ContFactory.h
+        ContStudent.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

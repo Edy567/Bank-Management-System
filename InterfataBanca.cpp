@@ -1,15 +1,11 @@
 #include "InterfataBanca.h"
-#include "Cont_Silver.h"
-#include "Cont_Gold.h"
-#include "Cont_premium.h"
+#include "ContFactory.h"
 #include "Exceptii.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cmath>
 #include <algorithm>
-
-
 
 std::string trim(const std::string &str) {
     size_t first = str.find_first_not_of(' ');
@@ -28,7 +24,6 @@ UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppS
     exchangeMonedaSursa = "RON";
     exchangeMonedaDest = "EUR";
     billFurnizor = "Enel";
-
     if (!font.openFromFile("arial.ttf")) {
         if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
             std::cerr << "Eroare.\n";
@@ -73,11 +68,9 @@ void UI_Banca::incarcaDate(const std::string &path) const {
                 ss >> nume >> prenume;
 
                 Client temp(nume, prenume, cnp, parola, venit, scor);
-
                 std::cout << "Client : " << nume << " " << prenume
                         << "  User: " << nume
                         << "  Parola: " << parola << std::endl;
-
                 int nrConturi;
                 fin >> nrConturi;
                 for (int j = 0; j < nrConturi; ++j) {
@@ -97,12 +90,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
                         cards.emplace_back(s, tit, exp, nr, Moneda(mc, mn, curs));
                     }
 
-                    Cont *ptr = nullptr;
-                    if (tipCont == "SILVER") ptr = new ContSilver(cards, iban, tr);
-                    else if (tipCont == "GOLD") ptr = new ContGold(cards, iban, tr);
-                    else if (tipCont == "PREMIUM") ptr = new ContPremium(cards, iban, tr);
-
-                    if (ptr) temp.adaugaCont(ptr);
+                    if (Cont *ptr = ContFactory::creareCont(tipCont, cards, iban, tr)) temp.adaugaCont(ptr);
                 }
                 banca.adaugaClient(temp);
             }
@@ -110,8 +98,6 @@ void UI_Banca::incarcaDate(const std::string &path) const {
     }
     fin.close();
 }
-
-
 
 void UI_Banca::run(const std::string &fisierDate) {
     incarcaDate(fisierDate);
@@ -221,7 +207,6 @@ void UI_Banca::drawLogin() {
     btnText.setOrigin(r.position + r.size / 2.f);
     btnText.setPosition(sf::Vector2f(400.f, 530.f));
     window.draw(btnText);
-
     if (!mesajEroare.empty()) {
         sf::Text err(font, mesajEroare, 16);
         err.setFillColor(sf::Color(220, 50, 50));
@@ -252,7 +237,6 @@ void UI_Banca::drawDashboard() {
 
     float yStart = 140.f;
     auto &conturi = clientLogat->getConturi();
-
     if (conturi.empty()) {
         sf::Text gol(font, "Nu ai niciun cont activ.", 20);
         gol.setFillColor(sf::Color::Black);
@@ -261,18 +245,17 @@ void UI_Banca::drawDashboard() {
     }
 
     for (auto *c: conturi) {
-        std::string tipCont = "Standard";
+        std::string tipCont = c->getTip();
         auto culoareCont = sf::Color(200, 200, 200);
 
-        if (dynamic_cast<ContSilver *>(c)) {
-            tipCont = "SILVER";
+        if (tipCont == "SILVER") {
             culoareCont = sf::Color(192, 192, 192);
-        } else if (dynamic_cast<ContGold *>(c)) {
-            tipCont = "GOLD";
+        } else if (tipCont == "GOLD") {
             culoareCont = sf::Color(255, 215, 0);
-        } else if (dynamic_cast<ContPremium *>(c)) {
-            tipCont = "PREMIUM";
+        } else if (tipCont == "PREMIUM") {
             culoareCont = sf::Color(50, 50, 50);
+        }else if (tipCont == "STUDENT") {
+            culoareCont = sf::Color(100, 200, 100);
         }
 
         size_t nrCarduri = c->getCarduri().size();
@@ -305,7 +288,6 @@ void UI_Banca::drawDashboard() {
         window.draw(ibanTxt);
 
         float yCard = yStart + 80.f;
-
         for (const auto &card: c->getCarduri()) {
             std::string cardInfo = card.getTitular();
             cardInfo += "  ....";
@@ -319,15 +301,13 @@ void UI_Banca::drawDashboard() {
             std::string s = std::to_string(card.getSuma());
             s.resize(s.find('.') + 3);
             std::string valuta = card.getMoneda().getCod();
-
-            std::string sumaText = s + " " + valuta;
+            std::string sumaText = s + " " += valuta;
 
             sf::Text txtSuma(font, sumaText, 18);
             txtSuma.setFillColor(sf::Color::Black);
             txtSuma.setStyle(sf::Text::Bold);
             txtSuma.setPosition(sf::Vector2f(550.f, yCard));
             window.draw(txtSuma);
-
             yCard += 35.f;
         }
 
@@ -387,7 +367,6 @@ void UI_Banca::drawTransfer() {
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
-
     sf::Text lblDest(font, "IBAN Destinatar", 16);
     lblDest.setFillColor(sf::Color(80, 80, 80));
     lblDest.setPosition(sf::Vector2f(200.f, 180.f));
@@ -404,7 +383,6 @@ void UI_Banca::drawTransfer() {
     txtDest.setFillColor(sf::Color::Black);
     txtDest.setPosition(sf::Vector2f(215.f, 222.f));
     window.draw(txtDest);
-
     sf::Text lblSuma(font, "Suma de transfer", 16);
     lblSuma.setFillColor(sf::Color(80, 80, 80));
     lblSuma.setPosition(sf::Vector2f(200.f, 300.f));
@@ -421,7 +399,6 @@ void UI_Banca::drawTransfer() {
     txtSuma.setFillColor(sf::Color::Black);
     txtSuma.setPosition(sf::Vector2f(215.f, 342.f));
     window.draw(txtSuma);
-
     sf::RectangleShape btnMoneda(sf::Vector2f(100.f, 50.f));
     btnMoneda.setPosition(sf::Vector2f(500.f, 330.f));
     btnMoneda.setFillColor(sf::Color(230, 230, 230));
@@ -441,7 +418,6 @@ void UI_Banca::drawTransfer() {
     btnSend.setPosition(sf::Vector2f(200.f, 450.f));
     btnSend.setFillColor(blue);
     window.draw(btnSend);
-
     sf::Text txtSend(font, "TRIMITE BANII", 20);
     txtSend.setStyle(sf::Text::Bold);
     txtSend.setFillColor(sf::Color::White);
@@ -449,12 +425,10 @@ void UI_Banca::drawTransfer() {
     txtSend.setOrigin(rs.position + rs.size / 2.f);
     txtSend.setPosition(sf::Vector2f(400.f, 480.f));
     window.draw(txtSend);
-
     sf::Text back(font, "< Inapoi la Dashboard (ESC)", 16);
     back.setFillColor(sf::Color(150, 150, 150));
     centerText(back, 850.f);
     window.draw(back);
-
     if (!infoMesaj.empty()) {
         sf::Text info(font, infoMesaj, 18);
         if (infoMesaj.find("Succes") != std::string::npos) info.setFillColor(sf::Color(0, 150, 0));
@@ -470,7 +444,6 @@ void UI_Banca::drawExchange() {
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
-
     sf::Text lblSuma(font, "Suma de schimbat", 16);
     lblSuma.setFillColor(sf::Color(80, 80, 80));
     lblSuma.setPosition(sf::Vector2f(200.f, 180.f));
@@ -492,7 +465,6 @@ void UI_Banca::drawExchange() {
     btnFrom.setPosition(sf::Vector2f(200.f, 300.f));
     btnFrom.setFillColor(sf::Color(230, 230, 230));
     window.draw(btnFrom);
-
     sf::Text txtFrom(font, "DIN: " + exchangeMonedaSursa, 18);
     txtFrom.setFillColor(sf::Color::Black);
     txtFrom.setPosition(sf::Vector2f(215.f, 312.f));
@@ -502,7 +474,6 @@ void UI_Banca::drawExchange() {
     btnTo.setPosition(sf::Vector2f(450.f, 300.f));
     btnTo.setFillColor(sf::Color(230, 230, 230));
     window.draw(btnTo);
-
     sf::Text txtTo(font, "IN: " + exchangeMonedaDest, 18);
     txtTo.setFillColor(sf::Color::Black);
     txtTo.setPosition(sf::Vector2f(465.f, 312.f));
@@ -512,7 +483,6 @@ void UI_Banca::drawExchange() {
     btnSchimb.setPosition(sf::Vector2f(200.f, 400.f));
     btnSchimb.setFillColor(blue);
     window.draw(btnSchimb);
-
     sf::Text txtSchimb(font, "EFECTUEAZA SCHIMB", 20);
     txtSchimb.setStyle(sf::Text::Bold);
     txtSchimb.setFillColor(sf::Color::White);
@@ -520,12 +490,10 @@ void UI_Banca::drawExchange() {
     txtSchimb.setOrigin(rs.position + rs.size / 2.f);
     txtSchimb.setPosition(sf::Vector2f(400.f, 430.f));
     window.draw(txtSchimb);
-
     sf::Text back(font, "< Inapoi (ESC)", 16);
     back.setFillColor(sf::Color(150, 150, 150));
     centerText(back, 850.f);
     window.draw(back);
-
     if (!infoMesaj.empty()) {
         sf::Text info(font, infoMesaj, 18);
         if (infoMesaj.find("Succes") != std::string::npos) info.setFillColor(sf::Color(0, 150, 0));
@@ -578,7 +546,6 @@ void UI_Banca::drawBills() {
     btnPay.setPosition(sf::Vector2f(200.f, 450.f));
     btnPay.setFillColor(blue);
     window.draw(btnPay);
-
     sf::Text txtPay(font, "PLATESTE", 20);
     txtPay.setStyle(sf::Text::Bold);
     txtPay.setFillColor(sf::Color::White);
@@ -586,12 +553,10 @@ void UI_Banca::drawBills() {
     txtPay.setOrigin(rs.position + rs.size / 2.f);
     txtPay.setPosition(sf::Vector2f(400.f, 480.f));
     window.draw(txtPay);
-
     sf::Text back(font, "< Inapoi (ESC)", 16);
     back.setFillColor(sf::Color(150, 150, 150));
     centerText(back, 850.f);
     window.draw(back);
-
     if (!infoMesaj.empty()) {
         sf::Text info(font, infoMesaj, 18);
         if (infoMesaj.find("Succes") != std::string::npos) info.setFillColor(sf::Color(0, 150, 0));
@@ -607,7 +572,6 @@ void UI_Banca::drawAdmin() {
     title.setStyle(sf::Text::Bold);
     centerText(title, 50.f);
     window.draw(title);
-
     float yPos = 120.f;
     const auto& clienti = banca.getClienti();
 
@@ -640,7 +604,6 @@ void UI_Banca::drawCredit() {
     title.setStyle(sf::Text::Bold);
     centerText(title, 80.f);
     window.draw(title);
-
     sf::Text lbl(font, "Suma Solicitata", 16);
     lbl.setFillColor(sf::Color(80, 80, 80));
     lbl.setPosition(sf::Vector2f(200.f, 200.f));
@@ -652,7 +615,6 @@ void UI_Banca::drawCredit() {
     box.setOutlineColor(cyan);
     box.setOutlineThickness(2.f);
     window.draw(box);
-
     sf::Text inp(font, inputBuffer, 20);
     inp.setFillColor(sf::Color::Black);
     inp.setPosition(sf::Vector2f(215.f, 242.f));
@@ -670,7 +632,6 @@ void UI_Banca::drawCredit() {
     txtCalc.setOrigin(rc.position + rc.size / 2.f);
     txtCalc.setPosition(sf::Vector2f(400.f, 380.f));
     window.draw(txtCalc);
-
     if (!infoMesaj.empty()) {
         sf::Text res(font, infoMesaj, 18);
         res.setFillColor(blue);
@@ -801,7 +762,6 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
             std::string destinatarCurat = transferIbanDest;
             std::erase(destinatarCurat, ' ');
-
             double sumaDeTrimis = 0;
             try {
                 sumaDeTrimis = std::stod(transferSuma);
@@ -812,7 +772,6 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
             bool transferReusit = false;
             std::string ultimaEroare;
-
             for (const auto *contSursa: clientLogat->getConturi()) {
                 try {
                     banca.transfer(contSursa->getIBAN(), destinatarCurat, sumaDeTrimis, transferMoneda);
@@ -852,12 +811,12 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
         if(sf::FloatRect({200.f, 400.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(exchangeSuma); } catch(...) { infoMesaj = "Suma invalida"; return; }
+            try { s = std::stod(exchangeSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
+            }
 
             if(!clientLogat || clientLogat->getConturi().empty()) return;
-
             try {
-                banca.schimbValutar(clientLogat, s, exchangeMonedaSursa, exchangeMonedaDest);
+                Banca::schimbValutar(clientLogat, s, exchangeMonedaSursa, exchangeMonedaDest);
                 infoMesaj = "Schimb reusit!";
             } catch(const std::exception& e) {
                 infoMesaj = e.what();
@@ -873,11 +832,11 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         }
         if(sf::FloatRect({200.f, 450.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(billSuma); } catch(...) { infoMesaj = "Suma invalida"; return; }
+            try { s = std::stod(billSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
+            }
 
             if(clientLogat->getConturi().empty()) return;
             std::string iban = clientLogat->getConturi()[0]->getIBAN();
-
             try {
                 banca.platesteFactura(iban, s, billFurnizor);
                 infoMesaj = "Factura platita cu succes!";
