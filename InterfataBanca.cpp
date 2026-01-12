@@ -301,7 +301,10 @@ void UI_Banca::drawDashboard() {
             std::string s = std::to_string(card.getSuma());
             s.resize(s.find('.') + 3);
             std::string valuta = card.getMoneda().getCod();
-            std::string sumaText = s + " " += valuta;
+
+            std::string sumaText = s;
+            sumaText.append(" ");
+            sumaText.append(valuta);
 
             sf::Text txtSuma(font, sumaText, 18);
             txtSuma.setFillColor(sf::Color::Black);
@@ -811,9 +814,7 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
         if(sf::FloatRect({200.f, 400.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(exchangeSuma); } catch (...) {
-                infoMesaj = "Suma invalida";
-                return;
+            try { s = std::stod(exchangeSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
             }
 
             if(!clientLogat || clientLogat->getConturi().empty()) return;
@@ -834,9 +835,7 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         }
         if(sf::FloatRect({200.f, 450.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(billSuma); } catch (...) {
-                infoMesaj = "Suma invalida";
-                return;
+            try { s = std::stod(billSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
             }
 
             if(clientLogat->getConturi().empty()) return;
