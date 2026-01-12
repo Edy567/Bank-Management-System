@@ -39,7 +39,7 @@ Client &Client::operator=(const Client &other) {
 }
 
 Client::~Client() {
-    for (auto* cont : conturi) {
+    for (auto *cont: conturi) {
         delete cont;
     }
     conturi.clear();

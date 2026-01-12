@@ -41,8 +41,8 @@ std::ostream &operator<<(std::ostream &os, const Cont &cont) {
 }
 
 const std::string &Cont::getIBAN() const { return IBAN; }
-const std::vector<Card> &Cont::getCarduri() const { return carduri; }
-//const std::vector<Tranzactie> &Cont::getTranzactii() const { return tranzactii; }
+[[maybe_unused]] const std::vector<Card> &Cont::getCarduri() const { return carduri;
+}
 
 
 bool Cont::retrageSuma(const double suma, const std::string &moneda) {
@@ -60,7 +60,6 @@ bool Cont::retrageSuma(const double suma, const std::string &moneda) {
 
 void Cont::adaugaSuma(const double suma, const std::string &moneda) {
     bool adaugat = false;
-
     for (auto &card: carduri) {
         if (card.getMoneda().getCod() == moneda) {
             card.adaugaSuma(suma);
@@ -74,11 +73,6 @@ void Cont::adaugaSuma(const double suma, const std::string &moneda) {
     }
 }
 
-//double Cont::getSoldTotal() const {
-//  double total = 0;
-// for (const auto &c: carduri) total += c.getSuma();
-// return total;
-//}
 
 double Cont::getSoldValuta(const std::string &moneda) const {
     for (const auto &c: carduri) {
@@ -93,15 +87,6 @@ bool Cont::areCardInValuta(const std::string &moneda) const {
         return c.getMoneda().getCod() == moneda;
     });
 }
-
-//bool Cont::adaugaCard(const Card &card) {
-//if (static_cast<int>(carduri.size()) >= limitaCarduri) {
-// std::cout << "Eroare : limita de carduri a fost depasita!";
-//   return false;
-// }
-//carduri.push_back(card);
-//  return true;
-//}
 
 void Cont::adaugaTranzactie(const Tranzactie &t) {
     tranzactii.push_back(t);

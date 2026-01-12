@@ -7,16 +7,16 @@ Banca::Banca(std::string numeBanca, std::vector<Client> clienti, std::vector<Ang
     std::cout << "(Banca) Banca " << this->nume << " a fost creata.\n";
 }
 
-void Banca::adaugaClient(const Client& c) {
+[[maybe_unused]] void Banca::adaugaClient(const Client& c) {
     clienti.push_back(c);
 }
 
-void Banca::adaugaAngajat(const Angajat& a) {
+[[maybe_unused]] void Banca::adaugaAngajat(const Angajat& a) {
     angajati.push_back(a);
 }
 
 
-Client* Banca::autentificareClient(const std::string& numeUtilizator, const std::string& parolaUtilizator) {
+[[maybe_unused]] Client* Banca::autentificareClient(const std::string& numeUtilizator, const std::string& parolaUtilizator) {
     for(auto& c : clienti) {
         if(c.getNume() == numeUtilizator && c.verificaParola(parolaUtilizator)) {
             return &c;
@@ -25,7 +25,7 @@ Client* Banca::autentificareClient(const std::string& numeUtilizator, const std:
     return nullptr;
 }
 
-void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda) {
+[[maybe_unused]] void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda) {
     Cont *contSursa = nullptr;
     Cont *contDestinatie = nullptr;
 
@@ -55,17 +55,15 @@ void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestin
 
     if (contSursa->retrageSuma(suma, moneda)) {
         contDestinatie->adaugaSuma(suma, moneda);
-
         contSursa->adaugaTranzactie(Tranzactie(-static_cast<int>(suma), "Transfer " + moneda + " catre " + ibanDestinatie));
         contDestinatie->adaugaTranzactie(Tranzactie(static_cast<int>(suma), "Transfer " + moneda + " de la " + ibanSursa));
-
         std::cout << "Transfer reusit: " << suma << " " << moneda << ".\n";
     } else {
         throw Eroare("Eroare interna la procesarea retragerii.");
     }
 }
 
-void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
+[[maybe_unused]] void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
                           const std::string &monedaDestinatie) {
     Cont *contSursa = nullptr;
     Cont *contDestinatie = nullptr;
@@ -90,7 +88,6 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
 
     if (!contSursa) throw Eroare("Fonduri insuficiente sau lipsa card in " + monedaSursa);
     if (!contDestinatie) throw Eroare("Nu detineti niciun card in " + monedaDestinatie + " pentru a primi banii.");
-
     auto getID = [](const std::string& m) -> int {
         if (m == "RON") return 1;
         if (m == "EUR") return 2;
@@ -103,7 +100,6 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
     int idD = getID(monedaDestinatie);
     int cheie = idS * 10 + idD;
     double rata;
-
     switch (cheie) {
         case 12: rata = 0.20;
             break;
@@ -138,7 +134,7 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
     }
 }
 
-void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string& furnizor) {
+[[maybe_unused]] void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string& furnizor) {
     Cont* cont = nullptr;
     for (auto &client: clienti) {
         for (auto *c: client.getConturi()) {
@@ -149,10 +145,8 @@ void Banca::platesteFactura(const std::string &ibanCont, double suma, const std:
         }
     }
     if (!cont) throw Eroare("Cont invalid.");
-
     if (!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
     if(cont->getSoldValuta("RON") < suma) throw FonduriInsuficiente();
-
     if(cont->retrageSuma(suma, "RON")) {
         cont->adaugaTranzactie(Tranzactie(-static_cast<int>(suma), "Plata factura: " + furnizor));
     }
