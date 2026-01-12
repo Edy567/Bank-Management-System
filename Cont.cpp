@@ -41,8 +41,7 @@ std::ostream &operator<<(std::ostream &os, const Cont &cont) {
 }
 
 const std::string &Cont::getIBAN() const { return IBAN; }
-[[maybe_unused]] const std::vector<Card> &Cont::getCarduri() const { return carduri;
-}
+const std::vector<Card> &Cont::getCarduri() const { return carduri; }
 
 
 bool Cont::retrageSuma(const double suma, const std::string &moneda) {

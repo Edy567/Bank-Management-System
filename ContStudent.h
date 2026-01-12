@@ -7,10 +7,11 @@ class ContStudent : public Cont {
 public:
     ContStudent(const std::vector<Card> &carduri, std::string IBAN,
                 const std::vector<Tranzactie> &tranzactii)
-        : Cont(carduri, std::move(IBAN), tranzactii, 2) {} 
+        : Cont(carduri, std::move(IBAN), tranzactii, 2) {
+    }
 
     [[nodiscard]] ContStudent *clone() const override { return new ContStudent(*this); }
-    [[nodiscard]] double calculeazaComision(double suma) const override { return suma*0.0; }
+    [[nodiscard]] double calculeazaComision(double suma) const override { return suma * 0.0; }
     [[nodiscard]] std::string getTip() const override { return "STUDENT"; }
 
 protected:

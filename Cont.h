@@ -31,7 +31,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Cont &cont);
 
     [[nodiscard]] const std::string &getIBAN() const;
-    [[nodiscard]] const std::vector<Card> &getCarduri() const;
+    [[nodiscard]] [[maybe_unused]] const std::vector<Card> &getCarduri() const;
 
     bool retrageSuma(double suma, const std::string &moneda);
     void adaugaSuma(double suma, const std::string &moneda);

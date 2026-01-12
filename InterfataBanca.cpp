@@ -254,7 +254,7 @@ void UI_Banca::drawDashboard() {
             culoareCont = sf::Color(255, 215, 0);
         } else if (tipCont == "PREMIUM") {
             culoareCont = sf::Color(50, 50, 50);
-        }else if (tipCont == "STUDENT") {
+        } else if (tipCont == "STUDENT") {
             culoareCont = sf::Color(100, 200, 100);
         }
 
@@ -811,7 +811,9 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
 
         if(sf::FloatRect({200.f, 400.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(exchangeSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
+            try { s = std::stod(exchangeSuma); } catch (...) {
+                infoMesaj = "Suma invalida";
+                return;
             }
 
             if(!clientLogat || clientLogat->getConturi().empty()) return;
@@ -832,7 +834,9 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
         }
         if(sf::FloatRect({200.f, 450.f}, {400.f, 60.f}).contains(pos)) {
             double s = 0;
-            try { s = std::stod(billSuma); } catch(...) { infoMesaj = "Suma invalida"; return;
+            try { s = std::stod(billSuma); } catch (...) {
+                infoMesaj = "Suma invalida";
+                return;
             }
 
             if(clientLogat->getConturi().empty()) return;

@@ -8,6 +8,7 @@ public:
                         const std::vector<Tranzactie> &tranzactii);
     [[nodiscard]] ContSilver *clone() const override;
     [[nodiscard]] double calculeazaComision(double suma) const override;
+
     [[nodiscard]] std::string getTip() const override { return "SILVER"; }
 
 protected:

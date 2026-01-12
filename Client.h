@@ -27,15 +27,15 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Client &c);
 
     [[nodiscard]] std::vector<Cont *> &getConturi();
-    [[nodiscard]] std::string credit(double suma, int luni) const;
+    [[nodiscard]] [[maybe_unused]] std::string credit(double suma, int luni) const;
 
     [[nodiscard]] const std::string &getCNP() const;
 
     [[nodiscard]] const std::string &getNume() const;
-    [[nodiscard]] const std::string &getPrenume() const;
+    [[nodiscard]] [[maybe_unused]] const std::string &getPrenume() const;
 
     [[nodiscard]] bool verificaParola(const std::string &p) const;
 
-    void adaugaCont(Cont *c);
+    [[maybe_unused]] void adaugaCont(Cont *c);
 };
 #endif

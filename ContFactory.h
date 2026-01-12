@@ -11,10 +11,10 @@
 
 class ContFactory {
 public:
-    static Cont* creareCont(const std::string& tipCont,
-                            const std::vector<Card>& carduri,
-                            const std::string& iban,
-                            const std::vector<Tranzactie>& tranzactii) {
+    static Cont *creareCont(const std::string &tipCont,
+                            const std::vector<Card> &carduri,
+                            const std::string &iban,
+                            const std::vector<Tranzactie> &tranzactii) {
         if (tipCont == "SILVER") {
             return new ContSilver(carduri, iban, tranzactii);
         } else if (tipCont == "GOLD") {
