@@ -38,8 +38,8 @@ bool CardValidator::verificaExpirare(const std::string &dataExp) {
         if (luna < 1 || luna > 12) return false;
 
 
-        std::time_t t = std::time(nullptr);
-        std::tm *now = std::localtime(&t);
+        const std::time_t t = std::time(nullptr);
+        const std::tm *now = std::localtime(&t);
         int anCurent = now->tm_year + 1900;
         int lunaCurenta = now->tm_mon + 1;
 
