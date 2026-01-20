@@ -8,9 +8,6 @@ public:
     enum class SecurityLevel { WEAK, MEDIUM, STRONG };
 
     [[maybe_unused]] static SecurityLevel checkPasswordStrength(const std::string &pass);
-
-
-
 };
 
 #endif
