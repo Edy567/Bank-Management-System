@@ -1,5 +1,6 @@
 #include "Banca.h"
 #include "Exceptii.h"
+#include "Templates.h"
 #include <utility>
 
 Banca::Banca(std::string numeBanca, std::vector<Client> clienti, std::vector<Angajat> angajati)
@@ -16,12 +17,9 @@ void Banca::adaugaAngajat(const Angajat& a) {
 }
 
 Client* Banca::autentificareClient(const std::string& numeUtilizator, const std::string& parolaUtilizator) {
-    for(auto& c : clienti) {
-        if(c.getNume() == numeUtilizator && c.verificaParola(parolaUtilizator)) {
-            return &c;
-        }
-    }
-    return nullptr;
+    return gasesteElement(clienti, [&](const Client &c) {
+        return c.getNume() == numeUtilizator && c.verificaParola(parolaUtilizator);
+    });
 }
 
 void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestinatie, double suma, const std::string& moneda) {
@@ -62,11 +60,10 @@ void Banca::transfer(const std::string &ibanSursa, const std::string &ibanDestin
     }
 }
 
-void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
-                          const std::string &monedaDestinatie) {
+[[maybe_unused]] void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &monedaSursa,
+                                           const std::string &monedaDestinatie) {
     Cont *contSursa = nullptr;
     Cont *contDestinatie = nullptr;
-
 
     for (auto *c: client->getConturi()) {
         if (c->areCardInValuta(monedaSursa)) {
@@ -76,7 +73,6 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
             }
         }
     }
-
 
     for (auto *c: client->getConturi()) {
         if (c->areCardInValuta(monedaDestinatie)) {
@@ -120,7 +116,6 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
             break;
     }
 
-
     if (contSursa->retrageSuma(sumaSursa, monedaSursa)) {
         double sumaDestinatie = sumaSursa * rata;
         contDestinatie->adaugaSuma(sumaDestinatie, monedaDestinatie);
@@ -136,16 +131,26 @@ void Banca::schimbValutar(Client *client, double sumaSursa, const std::string &m
 void Banca::platesteFactura(const std::string &ibanCont, double suma, const std::string& furnizor) {
     Cont* cont = nullptr;
     for (auto &client: clienti) {
-        for (auto *c: client.getConturi()) {
-            if (c->getIBAN() == ibanCont) {
-                cont = c;
-                break;
+        auto &toateConturile = client.getConturi();
+
+
+        auto conturiCompatibile = filtreazaElemente(toateConturile, [](const Cont *c) {
+            return c->areCardInValuta("RON");
+        });
+
+        for (const auto ptr: conturiCompatibile) {
+            if ((*ptr)->getIBAN() == ibanCont) {
+                if ((*ptr)->getSoldValuta("RON") >= suma) {
+                    cont = *ptr;
+                    goto Found;
+                }
             }
         }
     }
-    if (!cont) throw Eroare("Cont invalid.");
-    if (!cont->areCardInValuta("RON")) throw Eroare("Facturile se platesc doar din contul de RON.");
-    if(cont->getSoldValuta("RON") < suma) throw FonduriInsuficiente();
+
+Found:
+    if (!cont) throw Eroare("Cont invalid sau fonduri insuficiente (RON).");
+
     if(cont->retrageSuma(suma, "RON")) {
         cont->adaugaTranzactie(Tranzactie(-static_cast<int>(suma), "Plata factura: " + furnizor));
     }

@@ -25,4 +25,6 @@ public:
     ~Angajat();
 
     friend std::ostream &operator<<(std::ostream &os, const Angajat &ang);
+
+    [[nodiscard]] int getSalariu() const { return salariu; }
 };

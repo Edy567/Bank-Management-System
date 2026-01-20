@@ -1,11 +1,14 @@
 #include "InterfataBanca.h"
 #include "ContFactory.h"
+#include "ClientBuilder.h"
+#include "Stats.h"
 #include "Exceptii.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <iomanip>
 
 std::string trim(const std::string &str) {
     size_t first = str.find_first_not_of(' ');
@@ -18,7 +21,7 @@ std::string trim(const std::string &str) {
 
 UI_Banca::UI_Banca(Banca &b) : banca(b), clientLogat(nullptr), stareCurenta(AppState::LOGIN), loginFocus(0),
                                focusIndex(0) {
-    window.create(sf::VideoMode({800, 900}), "George Banking App", sf::Style::Titlebar | sf::Style::Close);
+    window.create(sf::VideoMode({800, 900}), "Banking App", sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(60);
     transferMoneda = "RON";
     exchangeMonedaSursa = "RON";
@@ -67,10 +70,16 @@ void UI_Banca::incarcaDate(const std::string &path) const {
                 std::string nume, prenume;
                 ss >> nume >> prenume;
 
-                Client temp(nume, prenume, cnp, parola, venit, scor);
-                std::cout << "Client : " << nume << " " << prenume
-                        << "  User: " << nume
-                        << "  Parola: " << parola << std::endl;
+
+                ClientBuilder builder;
+                Client temp = builder.setNume(nume)
+                                     .setPrenume(prenume)
+                                     .setCNP(cnp)
+                                     .setParola(parola)
+                                     .setVenit(venit)
+                                     .setScorCredit(scor)
+                                     .build();
+
                 int nrConturi;
                 fin >> nrConturi;
                 for (int j = 0; j < nrConturi; ++j) {
@@ -97,6 +106,25 @@ void UI_Banca::incarcaDate(const std::string &path) const {
         }
     }
     fin.close();
+
+
+    ClientBuilder sysBuilder;
+    Client admin = sysBuilder.setNume("Administrator")
+                             .setPrenume("System")
+                             .setCNP("0000000000000")
+                             .setParola("admin")
+                             .setVenit(99999)
+                             .setScorCredit(900)
+                             .build();
+    banca.adaugaClient(admin);
+
+
+    sysBuilder.reset();
+    Client guest = sysBuilder.setNume("Guest")
+                             .setPrenume("User")
+                             .setParola("guest")
+                             .build();
+    banca.adaugaClient(guest);
 }
 
 void UI_Banca::run(const std::string &fisierDate) {
@@ -149,13 +177,13 @@ void UI_Banca::run(const std::string &fisierDate) {
 }
 
 void UI_Banca::drawLogin() {
-    sf::Text logo(font, "George", 70);
+    sf::Text logo(font, "BOO", 70);
     logo.setFillColor(blue);
     logo.setStyle(sf::Text::Bold);
     centerText(logo, 150.f);
     window.draw(logo);
 
-    sf::Text subtitle(font, "Smart Banking", 20);
+    sf::Text subtitle(font, " Banca Orientata pe Obiecte", 20);
     subtitle.setFillColor(sf::Color(100, 100, 100));
     centerText(subtitle, 210.f);
     window.draw(subtitle);
@@ -301,7 +329,6 @@ void UI_Banca::drawDashboard() {
             std::string s = std::to_string(card.getSuma());
             s.resize(s.find('.') + 3);
             std::string valuta = card.getMoneda().getCod();
-
             std::string sumaText = s;
             sumaText.append(" ");
             sumaText.append(valuta);
@@ -575,7 +602,63 @@ void UI_Banca::drawAdmin() {
     title.setStyle(sf::Text::Bold);
     centerText(title, 50.f);
     window.draw(title);
-    float yPos = 120.f;
+
+
+    Stats<Client> statClienti(banca.getClienti());
+
+
+    double deviatieVenit = statClienti.standardDeviation([](const Client& c) {
+        return c.getVenit();
+    });
+
+
+    double venitMedian = statClienti.CalculMediana([](const Client& c) {
+        return c.getVenit();
+    });
+
+
+    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client& c) {
+        return c.getVenit();
+    });
+
+
+    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
+        return c.getScorCredit() > 650;
+    });
+
+
+    Stats<Angajat> statAngajati(banca.getAngajati());
+
+    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat& a) {
+        return static_cast<double>(a.getSalariu());
+    });
+
+    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat& a) {
+        return a.getSalariu() > 4000;
+    });
+
+    std::string statsText = "Informatii :\n";
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2);
+
+    ss << "\n";
+    ss << "Diferenta medie intre veniturile clientilor: " << deviatieVenit << "\n";
+    ss << "Venit median clienti: " << venitMedian << " RON\n";
+    ss << "Asimetria Veniturilor: " << asimetrieVenit << "\n";
+    ss << "Clienti Eligibili Credit : " << clientiEligibili << "\n\n";
+    ss << "Diferenta medie intre salariile angajatilor: " << deviatieSalariu << "\n";
+    ss << "Angajati Seniori : " << angajatiSeniori<<"\n\n";
+    ss << "Lista clienti : " <<"\n\n";
+
+
+    statsText += ss.str();
+
+    sf::Text txtStats(font, statsText, 18);
+    txtStats.setFillColor(blue);
+    txtStats.setPosition(sf::Vector2f(50.f, 100.f));
+    window.draw(txtStats);
+
+    float yPos = 350.f;
     const auto& clienti = banca.getClienti();
 
     for(const auto& c : clienti) {
@@ -703,20 +786,20 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             std::string user = trim(bufferNume);
             std::string pass = trim(bufferParola);
 
-            if (user == "admin" && pass == "admin") {
-                stareCurenta = AppState::ADMIN;
-                bufferNume.clear();
-                bufferParola.clear();
-                return;
-            }
-
             if (auto *c = banca.autentificareClient(user, pass)) {
-                clientLogat = c;
-                stareCurenta = AppState::DASHBOARD;
+
+                if (c->getNume() == "Administrator" && c->getCNP() == "0000000000000") {
+                    stareCurenta = AppState::ADMIN;
+                } else {
+                    clientLogat = c;
+                    stareCurenta = AppState::DASHBOARD;
+                }
                 bufferNume.clear();
                 bufferParola.clear();
                 mesajEroare.clear();
-            } else mesajEroare = "User sau Parola gresita!";
+            } else {
+                mesajEroare = "User sau Parola gresita!";
+            }
         }
     } else if (stareCurenta == AppState::DASHBOARD) {
         if (x >= 680 && x <= 780 && y >= 30 && y <= 60) {

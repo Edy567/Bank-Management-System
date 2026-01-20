@@ -11,8 +11,7 @@ Client::Client(std::string nume, std::string prenume, std::string CNP, std::stri
 Client::Client(const Client &other)
     : nume{other.nume}, prenume{other.prenume}, CNP{other.CNP}, parola{other.parola},
       venit{other.venit}, scorCredit{other.scorCredit} {
-
-    for (const auto* cont : other.conturi) {
+    for (const auto *cont: other.conturi) {
         conturi.push_back(cont->clone());
     }
     std::cout << "(Client) Constructor de copiere\n";
@@ -39,7 +38,7 @@ Client &Client::operator=(const Client &other) {
 }
 
 Client::~Client() {
-    for (auto* cont : conturi) {
+    for (auto *cont: conturi) {
         delete cont;
     }
     conturi.clear();

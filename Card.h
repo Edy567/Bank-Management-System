@@ -15,6 +15,7 @@ class Card {
 public:
     Card(const double &suma, std::string titular, std::string numarExp,
          std::string nrCard, const Moneda &moneda);
+
     Card(const Card &other);
 
     Card &operator=(const Card &other);
@@ -24,13 +25,15 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Card &card);
 
     [[nodiscard]] double getSuma() const;
+
     [[nodiscard]] const Moneda &getMoneda() const;
 
     [[nodiscard]] [[maybe_unused]] const std::string &getTitular() const;
 
-    [[nodiscard]] [[maybe_unused]] const std::string& getNrCard() const;
+    [[nodiscard]] [[maybe_unused]] const std::string &getNrCard() const;
 
     void scadeSuma(double valoare);
+
     void adaugaSuma(double valoare);
 };
 #endif
