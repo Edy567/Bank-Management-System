@@ -7,14 +7,12 @@
 
 class ContFactory {
 public:
-
     static Cont *creareCont(const std::string &tipCont,
                             const std::vector<Card> &carduri,
                             const std::string &iban,
                             const std::vector<Tranzactie> &tranzactii);
 
 private:
-    
     static bool valideazaIBAN(const std::string &iban);
 
     static std::string toUpper(std::string str);

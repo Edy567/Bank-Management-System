@@ -15,12 +15,9 @@ Cont *ContFactory::creareCont(const std::string &tipCont,
                               const std::vector<Card> &carduri,
                               const std::string &iban,
                               const std::vector<Tranzactie> &tranzactii) {
-
-
-    for (const auto& card : carduri) {
+    for (const auto &card: carduri) {
         if (!CardValidator::verificaLuhn(card.getNrCard())) {
             std::cerr << "Eroare: nr card invalid: " << card.getNrCard() << "\n";
-
         }
         if (!CardValidator::verificaExpirare(card.getNrExp())) {
             std::cerr << "Card expirat: " << card.getNrCard() << "\n";
