@@ -2,6 +2,7 @@
 // Created by User on 1/20/2026.
 //
 
+#include "CardValidator.h"
 #include "ContFactory.h"
 #include "Cont_Silver.h"
 #include "Cont_Gold.h"
@@ -14,6 +15,18 @@ Cont *ContFactory::creareCont(const std::string &tipCont,
                               const std::vector<Card> &carduri,
                               const std::string &iban,
                               const std::vector<Tranzactie> &tranzactii) {
+
+
+    for (const auto& card : carduri) {
+        if (!CardValidator::verificaLuhn(card.getNrCard())) {
+            std::cerr << "Eroare: nr card invalid: " << card.getNrCard() << "\n";
+
+        }
+        if (!CardValidator::verificaExpirare(card.getNrExp())) {
+            std::cerr << "Card expirat: " << card.getNrCard() << "\n";
+        }
+    }
+
     if (!valideazaIBAN(iban)) {
         std::cerr << "Eroare : IBAN invalid detectat -> " << iban << ". Se anuleaza crearea contului.\n";
         return nullptr;
@@ -45,6 +58,8 @@ bool ContFactory::valideazaIBAN(const std::string &iban) {
     if (iban.substr(0, 2) != "RO") return false;
     return true;
 }
+
+
 
 std::string ContFactory::toUpper(std::string str) {
     std::ranges::transform(str, str.begin(), ::toupper);

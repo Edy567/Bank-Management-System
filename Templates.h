@@ -28,17 +28,17 @@ std::vector<T *> filtreazaElemente(std::vector<T> &container, Func criteriu) {
     return rezultate;
 }
 
-template <typename T, typename Compare>
-void sorteazaVector(std::vector<T>& container, Compare comparator) {
+template<typename T, typename Compare>
+void sorteazaVector(std::vector<T> &container, Compare comparator) {
     std::sort(container.begin(), container.end(), comparator);
 }
 
 
-template <typename T, typename R, typename Func>
-std::vector<R> sorteazaVector(const std::vector<T>& container, Func extractor) {
+template<typename T, typename R, typename Func>
+std::vector<R> sorteazaVector(const std::vector<T> &container, Func extractor) {
     std::vector<R> rezultat;
     rezultat.reserve(container.size());
-    for (const auto& elem : container) {
+    for (const auto &elem: container) {
         rezultat.push_back(extractor(elem));
     }
     return rezultat;

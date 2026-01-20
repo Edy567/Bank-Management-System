@@ -32,6 +32,8 @@ public:
 
     [[nodiscard]] [[maybe_unused]] const std::string &getNrCard() const;
 
+    [[nodiscard]] [[maybe_unused]] const std::string &getNrExp() const { return numarExp; }
+
     void scadeSuma(double valoare);
 
     void adaugaSuma(double valoare);

@@ -7,30 +7,31 @@
 #include <algorithm>
 
 
-template <typename T>
+template<typename T>
 class Stats {
-    const std::vector<T>& date;
+    const std::vector<T> &date;
 
 public:
-    explicit Stats(const std::vector<T>& d) : date(d) {}
+    explicit Stats(const std::vector<T> &d) : date(d) {
+    }
 
 
-    double calculeazaMedia(std::function<double(const T&)> extractor) const {
+    double calculeazaMedia(std::function<double(const T &)> extractor) const {
         if (date.empty()) return 0.0;
         double suma = 0.0;
-        for (const auto& elem : date) {
+        for (const auto &elem: date) {
             suma += extractor(elem);
         }
         return suma / date.size();
     }
 
-    double standardDeviation(std::function<double(const T&)> extractor) const {
+    double standardDeviation(std::function<double(const T &)> extractor) const {
         if (date.size() < 2) return 0.0;
 
         double medie = calculeazaMedia(extractor);
         double sumaPatrate = 0.0;
 
-        for (const auto& elem : date) {
+        for (const auto &elem: date) {
             const double val = extractor(elem);
             double diff = val - medie;
             sumaPatrate += diff * diff;
@@ -40,9 +41,9 @@ public:
     }
 
 
-    int numaraDaca(std::function<bool(const T&)> predicat) const {
+    int numaraDaca(std::function<bool(const T &)> predicat) const {
         int count = 0;
-        for (const auto& elem : date) {
+        for (const auto &elem: date) {
             if (predicat(elem)) {
                 count++;
             }
@@ -51,13 +52,13 @@ public:
     }
 
 
-    double CalculMediana(std::function<double(const T&)> extractor) const {
+    double CalculMediana(std::function<double(const T &)> extractor) const {
         if (date.empty()) return 0.0;
 
 
         std::vector<double> valori;
         valori.reserve(date.size());
-        for (const auto& elem : date) {
+        for (const auto &elem: date) {
             valori.push_back(extractor(elem));
         }
 
@@ -66,16 +67,14 @@ public:
 
 
         if (size_t n = valori.size(); n % 2 == 0) {
-
             return (valori[n / 2 - 1] + valori[n / 2]) / 2.0;
         } else {
-
             return valori[n / 2];
         }
     }
 
     //
-    double calculeazaSkewness(std::function<double(const T&)> extractor) const {
+    double calculeazaSkewness(std::function<double(const T &)> extractor) const {
         size_t n = date.size();
         if (n < 2) return 0.0;
 
@@ -85,7 +84,7 @@ public:
         if (deviatie == 0) return 0.0; // Toate valorile sunt egale
 
         double sumaCuburi = 0.0;
-        for (const auto& elem : date) {
+        for (const auto &elem: date) {
             double val = extractor(elem);
 
             double diff = val - medie;

@@ -119,7 +119,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
     sysBuilder.reset();
     Client guest = sysBuilder.setNume("Guest")
             .setPrenume("User")
-                             .setParola("guest")
+            .setParola("guest")
             .setCNP("5000000000000")
             .makeStudent()
             .build();

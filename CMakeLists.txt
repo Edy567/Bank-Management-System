@@ -88,6 +88,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         ClientBuilder.h
         ClientBuilder.cpp
         ContFactory.cpp
+        CardValidator.h
+        CardValidator.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -122,5 +124,6 @@ endif()
 
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 copy_files(FILES banca_si_meniu.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+file(COPY ${CMAKE_SOURCE_DIR}/arial.ttf DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
