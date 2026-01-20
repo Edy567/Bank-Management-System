@@ -73,12 +73,12 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
                 ClientBuilder builder;
                 Client temp = builder.setNume(nume)
-                                     .setPrenume(prenume)
-                                     .setCNP(cnp)
-                                     .setParola(parola)
-                                     .setVenit(venit)
-                                     .setScorCredit(scor)
-                                     .build();
+                        .setPrenume(prenume)
+                        .setCNP(cnp)
+                        .setParola(parola)
+                        .setVenit(venit)
+                        .setScorCredit(scor)
+                        .build();
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -109,11 +109,11 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
     ClientBuilder sysBuilder;
     Client admin = sysBuilder.setNume("Administrator")
-                           .setPrenume("System")
-                           .setCNP("0000000000000")
-                           .setParola("admin")
-                           .makeVIP()
-                           .build();
+            .setPrenume("System")
+            .setCNP("0000000000000")
+            .setParola("admin")
+            .makeVIP()
+            .build();
     banca.adaugaClient(admin);
 
     sysBuilder.reset();
@@ -127,8 +127,8 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
     sysBuilder.reset();
     Client risky = sysBuilder.setNume("Dragan")
-                             .setPrenume("Mihaita")
-                             .setParola("1234")
+            .setPrenume("Mihaita")
+            .setParola("1234")
                              .setCNP("6000000000000")
                              .setVenit(2000)
                              .setScorCredit(300)
@@ -136,7 +136,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
     std::vector<Card> cardsRisky;
     cardsRisky.emplace_back(15.0, "Mihaita Dragan", "01/26", "0000000000000000", Moneda("RON", "Leu", 1));
-    if(Cont* ptr = ContFactory::creareCont("SILVER", cardsRisky, "RO00RISKY_RON", {})) {
+    if (Cont *ptr = ContFactory::creareCont("SILVER", cardsRisky, "RO00RISKY_RON", {})) {
         risky.adaugaCont(ptr);
     }
     banca.adaugaClient(risky);
@@ -632,13 +632,13 @@ void UI_Banca::drawAdmin() {
         return c.getVenit();
     });
 
-    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client&c) {
         return c.getScorCredit() > 650;
     });
 
     Stats<Angajat> statAngajati(banca.getAngajati());
 
-    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat& a) {
+    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat &a) {
         return static_cast<double>(a.getSalariu());
     });
 

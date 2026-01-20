@@ -102,7 +102,6 @@ Client ClientBuilder::build() {
     if (venit < 0) venit = 0;
 
 
-
     if (SecurityUtils::checkPasswordStrength(parola) == SecurityUtils::SecurityLevel::WEAK) {
         std::cout << "(Security Warning) Parola slaba pentru: " << nume << "\n";
     }

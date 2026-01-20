@@ -7,10 +7,10 @@ class SecurityUtils {
 public:
     enum class SecurityLevel { WEAK, MEDIUM, STRONG };
 
-    static SecurityLevel checkPasswordStrength(const std::string& pass);
-    
+   [[maybe_unused]] static SecurityLevel checkPasswordStrength(const std::string &pass);
 
-    static std::string encryptDecrypt(const std::string& data);
+
+   [[maybe_unused]] static std::string encryptDecrypt(const std::string &data);
 };
 
 #endif
