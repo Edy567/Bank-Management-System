@@ -5,7 +5,7 @@ class Config {
 private:
 
     Config() = default;
-    
+
     double comisionTransfer = 1.5; // 1.5 RON
     double limitaTransferSuspect = 10000.0; // 10.000 RON
     int maxIncercariLogin = 3;
@@ -13,7 +13,7 @@ private:
 public:
 
     Config(const Config&) = delete;
-    
+
 
     static Config& getInstance() {
         static Config instance;
@@ -21,9 +21,9 @@ public:
     }
 
 
-    double getComisionTransfer() const { return comisionTransfer; }
-    double getLimitaSuspecta() const { return limitaTransferSuspect; }
-    int getMaxLoginAttempts() const { return maxIncercariLogin; }
+    [[nodiscard]] [[maybe_unused]] double getComisionTransfer() const { return comisionTransfer; }
+     [[nodiscard]] [[maybe_unused]] double getLimitaSuspecta() const { return limitaTransferSuspect; }
+     [[nodiscard]] [[maybe_unused]] int getMaxLoginAttempts() const { return maxIncercariLogin; }
 
     void setComision(double val) { comisionTransfer = val; }
 };
