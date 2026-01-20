@@ -10,16 +10,13 @@
 #include <algorithm>
 #include <iostream>
 
-Cont* ContFactory::creareCont(const std::string &tipCont,
-                              const std::vector<Card>& carduri,
-                              const std::string& iban,
-                              const std::vector<Tranzactie>& tranzactii) {
-
-
+Cont *ContFactory::creareCont(const std::string &tipCont,
+                              const std::vector<Card> &carduri,
+                              const std::string &iban,
+                              const std::vector<Tranzactie> &tranzactii) {
     if (!valideazaIBAN(iban)) {
         std::cerr << "Eroare : IBAN invalid detectat -> " << iban << ". Se anuleaza crearea contului.\n";
         return nullptr;
-
     }
 
 
@@ -32,10 +29,10 @@ Cont* ContFactory::creareCont(const std::string &tipCont,
     if (tip == "GOLD") {
         return new ContGold(carduri, iban, tranzactii);
     }
-     if (tip == "PREMIUM") {
+    if (tip == "PREMIUM") {
         return new ContPremium(carduri, iban, tranzactii);
     }
-     if (tip == "STUDENT") {
+    if (tip == "STUDENT") {
         return new ContStudent(carduri, iban, tranzactii);
     }
 
@@ -43,8 +40,7 @@ Cont* ContFactory::creareCont(const std::string &tipCont,
     return nullptr;
 }
 
-bool ContFactory::valideazaIBAN(const std::string& iban) {
-
+bool ContFactory::valideazaIBAN(const std::string &iban) {
     if (iban.length() < 10) return false;
     if (iban.substr(0, 2) != "RO") return false;
     return true;

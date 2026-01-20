@@ -2,6 +2,7 @@
 #include "ContFactory.h"
 #include "ClientBuilder.h"
 #include "Stats.h"
+#include "Templates.h"
 #include "Exceptii.h"
 #include <iostream>
 #include <fstream>
@@ -70,15 +71,14 @@ void UI_Banca::incarcaDate(const std::string &path) const {
                 std::string nume, prenume;
                 ss >> nume >> prenume;
 
-
                 ClientBuilder builder;
                 Client temp = builder.setNume(nume)
-                        .setPrenume(prenume)
-                        .setCNP(cnp)
-                        .setParola(parola)
-                        .setVenit(venit)
-                        .setScorCredit(scor)
-                        .build();
+                                     .setPrenume(prenume)
+                                     .setCNP(cnp)
+                                     .setParola(parola)
+                                     .setVenit(venit)
+                                     .setScorCredit(scor)
+                                     .build();
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -107,24 +107,32 @@ void UI_Banca::incarcaDate(const std::string &path) const {
     }
     fin.close();
 
-
     ClientBuilder sysBuilder;
-    Client admin = sysBuilder.setNume("Administrator")
-            .setPrenume("System")
-            .setCNP("0000000000000")
-            .setParola("admin")
-            .setVenit(99999)
-            .setScorCredit(900)
-            .build();
-    banca.adaugaClient(admin);
-
+    Client vip = sysBuilder.setNume("Fieraru")
+                           .setPrenume("Edy")
+                           .setCNP("1999999999999")
+                           .setParola("smecher")
+                           .makeVIP()
+                           .build();
+    banca.adaugaClient(vip);
 
     sysBuilder.reset();
     Client guest = sysBuilder.setNume("Guest")
-            .setPrenume("User")
-            .setParola("guest")
-            .build();
+                             .setPrenume("User")
+                             .setParola("guest")
+                             .setCNP("5000000000000")
+                             .makeStudent()
+                             .build();
     banca.adaugaClient(guest);
+
+    sysBuilder.reset();
+    Client risky = sysBuilder.setNume("Dragan")
+                             .setPrenume("Mihaita")
+                             .setParola("1234")
+                             .setCNP("6000000000000")
+                             .makeRiskyClient()
+                             .build();
+    banca.adaugaClient(risky);
 }
 
 void UI_Banca::run(const std::string &fisierDate) {
@@ -603,53 +611,43 @@ void UI_Banca::drawAdmin() {
     centerText(title, 50.f);
     window.draw(title);
 
-
     Stats<Client> statClienti(banca.getClienti());
-
 
     double deviatieVenit = statClienti.standardDeviation([](const Client& c) {
         return c.getVenit();
     });
 
-
-    double venitMedian = statClienti.CalculMediana([](const Client &c) {
+    double venitMedian = statClienti.CalculMediana([](const Client& c) {
         return c.getVenit();
     });
 
-
-    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client &c) {
+    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client& c) {
         return c.getVenit();
     });
 
-
-    int clientiEligibili = statClienti.numaraDaca([](const Client &c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
         return c.getScorCredit() > 650;
     });
 
-
     Stats<Angajat> statAngajati(banca.getAngajati());
 
-    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat &a) {
+    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat& a) {
         return static_cast<double>(a.getSalariu());
     });
 
-    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat &a) {
+    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat& a) {
         return a.getSalariu() > 4000;
     });
 
     std::string statsText = "Informatii :\n";
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2);
-
-    ss << "\n";
-    ss << "Diferenta medie intre veniturile clientilor: " << deviatieVenit << "\n";
-    ss << "Venit median clienti: " << venitMedian << " RON\n";
-    ss << "Asimetria Veniturilor: " << asimetrieVenit << "\n";
-    ss << "Clienti Eligibili Credit : " << clientiEligibili << "\n\n";
-    ss << "Diferenta medie intre salariile angajatilor: " << deviatieSalariu << "\n";
-    ss << "Angajati Seniori : " << angajatiSeniori << "\n\n";
-    ss << "Lista clienti : " << "\n\n";
-
+    ss << "Deviatie Std Venit Clienti: " << deviatieVenit << "\n";
+    ss << "Venit Median Clienti: " << venitMedian << " RON\n";
+    ss << "Asimetrie Venituri: " << asimetrieVenit << "\n";
+    ss << "Clienti Eligibili Credit (>650): " << clientiEligibili << "\n\n";
+    ss << "Deviatie Std Salarii: " << deviatieSalariu << "\n";
+    ss << "Angajati Seniori (>4000): " << angajatiSeniori;
 
     statsText += ss.str();
 
@@ -658,16 +656,19 @@ void UI_Banca::drawAdmin() {
     txtStats.setPosition(sf::Vector2f(50.f, 100.f));
     window.draw(txtStats);
 
-    float yPos = 350.f;
-    const auto &clienti = banca.getClienti();
+    std::vector<Client> clientiSortati = banca.getClienti();
+    sorteazaVector(clientiSortati, [](const Client& a, const Client& b) {
+        return a.getVenit() > b.getVenit();
+    });
 
-    for (const auto &c: clienti) {
+    float yPos = 350.f;
+    for(const auto& c : clientiSortati) {
         sf::RectangleShape row(sf::Vector2f(700.f, 40.f));
         row.setPosition(sf::Vector2f(50.f, yPos));
         row.setFillColor(sf::Color::White);
         window.draw(row);
 
-        std::string info = c.getNume() + " " + c.getPrenume() + " | CNP: " + c.getCNP();
+        std::string info = c.getNume() + " " + c.getPrenume() + " | Venit: " + std::to_string(static_cast<int>(c.getVenit()));
         sf::Text txt(font, info, 16);
         txt.setFillColor(sf::Color::Black);
         txt.setPosition(sf::Vector2f(60.f, yPos + 10.f));
@@ -787,8 +788,7 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             std::string pass = trim(bufferParola);
 
             if (auto *c = banca.autentificareClient(user, pass)) {
-
-                if (c->getNume() == "Administrator" && c->getCNP() == "0000000000000") {
+                if (c->getNume() == "Musk" && c->getCNP() == "1999999999999") {
                     stareCurenta = AppState::ADMIN;
                 } else {
                     clientLogat = c;
