@@ -22,7 +22,7 @@ SecurityUtils::SecurityLevel SecurityUtils::checkPasswordStrength(const std::str
 
     return SecurityLevel::WEAK;
 }
-
+/*
 std::string SecurityUtils::encryptDecrypt(const std::string &data) {
     // Cheie de criptare hardcodata (pe un singur char pt XOR simplu)
     std::string output = data;
@@ -34,3 +34,5 @@ std::string SecurityUtils::encryptDecrypt(const std::string &data) {
     }
     return output;
 }
+
+*/

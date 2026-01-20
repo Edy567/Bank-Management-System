@@ -38,11 +38,11 @@ public:
 
     ClientBuilder &setScorCredit(int s);
 
-   [[maybe_unused]] ClientBuilder &makeVIP();
+    [[maybe_unused]] ClientBuilder &makeVIP();
 
-   [[maybe_unused]] ClientBuilder &makeStudent();
+    [[maybe_unused]] ClientBuilder &makeStudent();
 
-   [[maybe_unused]] ClientBuilder &makeRiskyClient();
+    [[maybe_unused]] ClientBuilder &makeRiskyClient();
 
     Client build();
 };
