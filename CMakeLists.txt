@@ -92,6 +92,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         CardValidator.cpp
         SecurityUtils.h
         SecurityUtils.cpp
+        Config.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

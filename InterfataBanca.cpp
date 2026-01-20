@@ -4,6 +4,7 @@
 #include "Stats.h"
 #include "Templates.h"
 #include "Exceptii.h"
+#include "Config.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -129,7 +130,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
     Client risky = sysBuilder.setNume("Dragan")
             .setPrenume("Mihaita")
             .setParola("1234")
-                             .setCNP("6000000000000")
+            .setCNP("6000000000000")
                              .setVenit(2000)
                              .setScorCredit(300)
                              .build();
@@ -632,7 +633,7 @@ void UI_Banca::drawAdmin() {
         return c.getVenit();
     });
 
-    int clientiEligibili = statClienti.numaraDaca([](const Client&c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client &c) {
         return c.getScorCredit() > 650;
     });
 
@@ -860,6 +861,11 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
                 sumaDeTrimis = std::stod(transferSuma);
             } catch (...) {
                 infoMesaj = "Eroare: Suma invalida!";
+                return;
+            }
+
+            if (sumaDeTrimis > Config::getInstance().getLimitaSuspecta()) {
+                infoMesaj = "Eroare: Suma depaseste limita configurata!";
                 return;
             }
 
