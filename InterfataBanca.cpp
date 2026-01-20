@@ -131,7 +131,7 @@ void UI_Banca::incarcaDate(const std::string &path) const {
             .setPrenume("Mihaita")
             .setParola("1234")
             .setCNP("6000000000000")
-                             .setVenit(2000)
+            .setVenit(2000)
                              .setScorCredit(300)
                              .build();
 
