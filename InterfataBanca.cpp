@@ -73,12 +73,12 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
                 ClientBuilder builder;
                 Client temp = builder.setNume(nume)
-                                     .setPrenume(prenume)
-                                     .setCNP(cnp)
-                                     .setParola(parola)
-                                     .setVenit(venit)
-                                     .setScorCredit(scor)
-                                     .build();
+                        .setPrenume(prenume)
+                        .setCNP(cnp)
+                        .setParola(parola)
+                        .setVenit(venit)
+                        .setScorCredit(scor)
+                        .build();
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -110,20 +110,20 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
     ClientBuilder sysBuilder;
     Client admin = sysBuilder.setNume("Administrator")
-                             .setPrenume("System")
-                             .setCNP("0000000000000")
-                             .setParola("admin")
-                             .setVenit(99999)
-                             .setScorCredit(900)
-                             .build();
+            .setPrenume("System")
+            .setCNP("0000000000000")
+            .setParola("admin")
+            .setVenit(99999)
+            .setScorCredit(900)
+            .build();
     banca.adaugaClient(admin);
 
 
     sysBuilder.reset();
     Client guest = sysBuilder.setNume("Guest")
-                             .setPrenume("User")
-                             .setParola("guest")
-                             .build();
+            .setPrenume("User")
+            .setParola("guest")
+            .build();
     banca.adaugaClient(guest);
 }
 
@@ -612,28 +612,28 @@ void UI_Banca::drawAdmin() {
     });
 
 
-    double venitMedian = statClienti.CalculMediana([](const Client& c) {
+    double venitMedian = statClienti.CalculMediana([](const Client &c) {
         return c.getVenit();
     });
 
 
-    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client& c) {
+    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client &c) {
         return c.getVenit();
     });
 
 
-    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client &c) {
         return c.getScorCredit() > 650;
     });
 
 
     Stats<Angajat> statAngajati(banca.getAngajati());
 
-    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat& a) {
+    double deviatieSalariu = statAngajati.standardDeviation([](const Angajat &a) {
         return static_cast<double>(a.getSalariu());
     });
 
-    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat& a) {
+    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat &a) {
         return a.getSalariu() > 4000;
     });
 
@@ -647,8 +647,8 @@ void UI_Banca::drawAdmin() {
     ss << "Asimetria Veniturilor: " << asimetrieVenit << "\n";
     ss << "Clienti Eligibili Credit : " << clientiEligibili << "\n\n";
     ss << "Diferenta medie intre salariile angajatilor: " << deviatieSalariu << "\n";
-    ss << "Angajati Seniori : " << angajatiSeniori<<"\n\n";
-    ss << "Lista clienti : " <<"\n\n";
+    ss << "Angajati Seniori : " << angajatiSeniori << "\n\n";
+    ss << "Lista clienti : " << "\n\n";
 
 
     statsText += ss.str();
@@ -659,9 +659,9 @@ void UI_Banca::drawAdmin() {
     window.draw(txtStats);
 
     float yPos = 350.f;
-    const auto& clienti = banca.getClienti();
+    const auto &clienti = banca.getClienti();
 
-    for(const auto& c : clienti) {
+    for (const auto &c: clienti) {
         sf::RectangleShape row(sf::Vector2f(700.f, 40.f));
         row.setPosition(sf::Vector2f(50.f, yPos));
         row.setFillColor(sf::Color::White);
