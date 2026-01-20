@@ -73,12 +73,12 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
                 ClientBuilder builder;
                 Client temp = builder.setNume(nume)
-                                     .setPrenume(prenume)
-                                     .setCNP(cnp)
-                                     .setParola(parola)
-                                     .setVenit(venit)
-                                     .setScorCredit(scor)
-                                     .build();
+                        .setPrenume(prenume)
+                        .setCNP(cnp)
+                        .setParola(parola)
+                        .setVenit(venit)
+                        .setScorCredit(scor)
+                        .build();
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -118,11 +118,11 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
     sysBuilder.reset();
     Client guest = sysBuilder.setNume("Guest")
-                             .setPrenume("User")
+            .setPrenume("User")
                              .setParola("guest")
-                             .setCNP("5000000000000")
-                             .makeStudent()
-                             .build();
+            .setCNP("5000000000000")
+            .makeStudent()
+            .build();
     banca.adaugaClient(guest);
 
     sysBuilder.reset();
@@ -621,11 +621,11 @@ void UI_Banca::drawAdmin() {
         return c.getVenit();
     });
 
-    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client& c) {
+    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client &c) {
         return c.getVenit();
     });
 
-    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client &c) {
         return c.getScorCredit() > 650;
     });
 
@@ -635,7 +635,7 @@ void UI_Banca::drawAdmin() {
         return static_cast<double>(a.getSalariu());
     });
 
-    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat& a) {
+    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat &a) {
         return a.getSalariu() > 4000;
     });
 
@@ -662,7 +662,7 @@ void UI_Banca::drawAdmin() {
     });
 
     float yPos = 350.f;
-    for(const auto& c : clientiSortati) {
+    for (const auto &c: clientiSortati) {
         sf::RectangleShape row(sf::Vector2f(700.f, 40.f));
         row.setPosition(sf::Vector2f(50.f, yPos));
         row.setFillColor(sf::Color::White);

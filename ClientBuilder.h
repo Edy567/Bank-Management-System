@@ -19,7 +19,7 @@ class ClientBuilder {
     double venit;
     int scorCredit;
 
-    std::vector<Cont*> conturiDeAtasat;
+    std::vector<Cont *> conturiDeAtasat;
 
 public:
     ClientBuilder();
@@ -38,11 +38,11 @@ public:
 
     ClientBuilder &setScorCredit(int s);
 
-    ClientBuilder& makeVIP();
+    ClientBuilder &makeVIP();
 
-    ClientBuilder& makeStudent();
+    ClientBuilder &makeStudent();
 
-    ClientBuilder& makeRiskyClient();
+    ClientBuilder &makeRiskyClient();
 
     Client build();
 };
