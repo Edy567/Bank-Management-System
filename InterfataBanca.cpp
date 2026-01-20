@@ -73,12 +73,12 @@ void UI_Banca::incarcaDate(const std::string &path) const {
 
                 ClientBuilder builder;
                 Client temp = builder.setNume(nume)
-                        .setPrenume(prenume)
-                        .setCNP(cnp)
-                        .setParola(parola)
-                        .setVenit(venit)
-                        .setScorCredit(scor)
-                        .build();
+                                     .setPrenume(prenume)
+                                     .setCNP(cnp)
+                                     .setParola(parola)
+                                     .setVenit(venit)
+                                     .setScorCredit(scor)
+                                     .build();
 
                 int nrConturi;
                 fin >> nrConturi;
@@ -108,21 +108,21 @@ void UI_Banca::incarcaDate(const std::string &path) const {
     fin.close();
 
     ClientBuilder sysBuilder;
-    Client vip = sysBuilder.setNume("Fieraru")
-                           .setPrenume("Edy")
-                           .setCNP("1999999999999")
-                           .setParola("smecher")
+    Client admin = sysBuilder.setNume("Administrator")
+                           .setPrenume("System")
+                           .setCNP("0000000000000")
+                           .setParola("admin")
                            .makeVIP()
                            .build();
-    banca.adaugaClient(vip);
+    banca.adaugaClient(admin);
 
     sysBuilder.reset();
     Client guest = sysBuilder.setNume("Guest")
-            .setPrenume("User")
-            .setParola("guest")
-            .setCNP("5000000000000")
-            .makeStudent()
-            .build();
+                             .setPrenume("User")
+                             .setParola("guest")
+                             .setCNP("5000000000000")
+                             .makeStudent()
+                             .build();
     banca.adaugaClient(guest);
 
     sysBuilder.reset();
@@ -130,8 +130,15 @@ void UI_Banca::incarcaDate(const std::string &path) const {
                              .setPrenume("Mihaita")
                              .setParola("1234")
                              .setCNP("6000000000000")
-                             .makeRiskyClient()
+                             .setVenit(2000)
+                             .setScorCredit(300)
                              .build();
+
+    std::vector<Card> cardsRisky;
+    cardsRisky.emplace_back(15.0, "Mihaita Dragan", "01/26", "0000000000000000", Moneda("RON", "Leu", 1));
+    if(Cont* ptr = ContFactory::creareCont("SILVER", cardsRisky, "RO00RISKY_RON", {})) {
+        risky.adaugaCont(ptr);
+    }
     banca.adaugaClient(risky);
 }
 
@@ -621,11 +628,11 @@ void UI_Banca::drawAdmin() {
         return c.getVenit();
     });
 
-    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client &c) {
+    double asimetrieVenit = statClienti.calculeazaSkewness([](const Client& c) {
         return c.getVenit();
     });
 
-    int clientiEligibili = statClienti.numaraDaca([](const Client &c) {
+    int clientiEligibili = statClienti.numaraDaca([](const Client& c) {
         return c.getScorCredit() > 650;
     });
 
@@ -635,7 +642,7 @@ void UI_Banca::drawAdmin() {
         return static_cast<double>(a.getSalariu());
     });
 
-    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat &a) {
+    int angajatiSeniori = statAngajati.numaraDaca([](const Angajat& a) {
         return a.getSalariu() > 4000;
     });
 
@@ -662,7 +669,7 @@ void UI_Banca::drawAdmin() {
     });
 
     float yPos = 350.f;
-    for (const auto &c: clientiSortati) {
+    for(const auto& c : clientiSortati) {
         sf::RectangleShape row(sf::Vector2f(700.f, 40.f));
         row.setPosition(sf::Vector2f(50.f, yPos));
         row.setFillColor(sf::Color::White);
@@ -788,7 +795,7 @@ void UI_Banca::processClick(const sf::Vector2f &pos) {
             std::string pass = trim(bufferParola);
 
             if (auto *c = banca.autentificareClient(user, pass)) {
-                if (c->getNume() == "Musk" && c->getCNP() == "1999999999999") {
+                if (c->getNume() == "Administrator" && c->getCNP() == "0000000000000") {
                     stareCurenta = AppState::ADMIN;
                 } else {
                     clientLogat = c;

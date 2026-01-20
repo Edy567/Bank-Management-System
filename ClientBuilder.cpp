@@ -1,7 +1,8 @@
 #include "ClientBuilder.h"
 #include "ContFactory.h"
 #include "Card.h"
-
+#include "SecurityUtils.h"
+#include <iostream>
 
 ClientBuilder::ClientBuilder() {
     reset();
@@ -52,18 +53,15 @@ ClientBuilder &ClientBuilder::makeVIP() {
     scorCredit = 850;
     if (nume.empty()) nume = "VIP_User";
 
-
     const std::vector<Card> cRon = {Card(50000.0, "Titular VIP", "12/30", "1111222233334444", Moneda("RON", "Leu", 1))};
     if (Cont *p = ContFactory::creareCont("PREMIUM", cRon, "RO01VIP_RON", {}))
         conturiDeAtasat.push_back(p);
-
 
     const std::vector<Card> cEur = {
         Card(10000.0, "Titular VIP", "12/30", "5555666677778888", Moneda("EUR", "Euro", 4.97))
     };
     if (Cont *p = ContFactory::creareCont("PREMIUM", cEur, "RO02VIP_EUR", {}))
         conturiDeAtasat.push_back(p);
-
 
     const std::vector<Card> cGbp = {
         Card(5000.0, "Titular VIP", "12/30", "9999000011112222", Moneda("GBP", "Lira", 5.80))
@@ -78,7 +76,6 @@ ClientBuilder &ClientBuilder::makeStudent() {
     venit = 800.0;
     scorCredit = 600;
 
-
     const std::vector<Card> cStud = {
         Card(500.50, "Student Bursier", "09/28", "1234123412341234", Moneda("RON", "Leu", 1))
     };
@@ -92,7 +89,6 @@ ClientBuilder &ClientBuilder::makeRiskyClient() {
     venit = 2000.0;
     scorCredit = 300;
 
-
     const std::vector<Card> cRisk = {Card(30, "Riscant", "01/26", "0000000000000000", Moneda("RON", "Leu", 1))};
     if (Cont *p = ContFactory::creareCont("SILVER", cRisk, "RO00RISKY_RON", {}))
         conturiDeAtasat.push_back(p);
@@ -105,15 +101,19 @@ Client ClientBuilder::build() {
     if (prenume.empty()) prenume = "";
     if (venit < 0) venit = 0;
 
-    Client c(nume, prenume, CNP, parola, venit, scorCredit);
 
+
+    if (SecurityUtils::checkPasswordStrength(parola) == SecurityUtils::SecurityLevel::WEAK) {
+        std::cout << "(Security Warning) Parola slaba pentru: " << nume << "\n";
+    }
+
+    Client c(nume, prenume, CNP, parola, venit, scorCredit);
 
     for (auto *cont: conturiDeAtasat) {
         c.adaugaCont(cont);
     }
-    
 
-    conturiDeAtasat.clear(); 
+    conturiDeAtasat.clear();
 
     return c;
 }
