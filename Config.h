@@ -22,10 +22,10 @@ public:
 
 
     [[nodiscard]] [[maybe_unused]] double getComisionTransfer() const { return comisionTransfer; }
-     [[nodiscard]] [[maybe_unused]] double getLimitaSuspecta() const { return limitaTransferSuspect; }
-     [[nodiscard]] [[maybe_unused]] int getMaxLoginAttempts() const { return maxIncercariLogin; }
+    [[nodiscard]] [[maybe_unused]] double getLimitaSuspecta() const { return limitaTransferSuspect; }
+    [[nodiscard]] [[maybe_unused]] int getMaxLoginAttempts() const { return maxIncercariLogin; }
 
-    void setComision(double val) { comisionTransfer = val; }
+    [[maybe_unused]] void setComision(const double val) { comisionTransfer = val; }
 };
 
 #endif
