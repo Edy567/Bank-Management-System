@@ -113,7 +113,6 @@ void UI_Banca::incarcaDate(const std::string &path) const {
             .setPrenume("System")
             .setCNP("0000000000000")
             .setParola("admin")
-            .makeVIP()
             .build();
     banca.adaugaClient(admin);
 
@@ -131,16 +130,18 @@ void UI_Banca::incarcaDate(const std::string &path) const {
             .setPrenume("Mihaita")
             .setParola("1234")
             .setCNP("6000000000000")
-            .setVenit(2000)
-                             .setScorCredit(300)
+            .makeRiskyClient()
                              .build();
 
-    std::vector<Card> cardsRisky;
-    cardsRisky.emplace_back(15.0, "Mihaita Dragan", "01/26", "0000000000000000", Moneda("RON", "Leu", 1));
-    if (Cont *ptr = ContFactory::creareCont("SILVER", cardsRisky, "RO00RISKY_RON", {})) {
-        risky.adaugaCont(ptr);
-    }
     banca.adaugaClient(risky);
+    sysBuilder.reset();
+    Client vip = sysBuilder.setNume("BOO's CEO")
+                           .setPrenume("")
+                           .setCNP("1999999999999")
+                           .setParola("smecher")
+                           .makeVIP()
+                           .build();
+    banca.adaugaClient(vip);
 }
 
 void UI_Banca::run(const std::string &fisierDate) {
@@ -613,13 +614,16 @@ void UI_Banca::drawBills() {
 }
 
 void UI_Banca::drawAdmin() {
+
     sf::Text title(font, "Admin Panel", 32);
     title.setFillColor(sf::Color(200, 50, 50));
     title.setStyle(sf::Text::Bold);
     centerText(title, 50.f);
     window.draw(title);
 
-    Stats<Client> statClienti(banca.getClienti());
+
+    const auto& totiClientii = banca.getClienti();
+    Stats<Client> statClienti(totiClientii);
 
     double deviatieVenit = statClienti.standardDeviation([](const Client& c) {
         return c.getVenit();
@@ -653,9 +657,9 @@ void UI_Banca::drawAdmin() {
     ss << "Deviatie Std Venit Clienti: " << deviatieVenit << "\n";
     ss << "Venit Median Clienti: " << venitMedian << " RON\n";
     ss << "Asimetrie Venituri: " << asimetrieVenit << "\n";
-    ss << "Clienti Eligibili Credit (>650): " << clientiEligibili << "\n\n";
+    ss << "Clienti Eligibili Credit: " << clientiEligibili << "\n\n";
     ss << "Deviatie Std Salarii: " << deviatieSalariu << "\n";
-    ss << "Angajati Seniori (>4000): " << angajatiSeniori;
+    ss << "Angajati Seniori : " << angajatiSeniori;
 
     statsText += ss.str();
 
@@ -664,19 +668,30 @@ void UI_Banca::drawAdmin() {
     txtStats.setPosition(sf::Vector2f(50.f, 100.f));
     window.draw(txtStats);
 
-    std::vector<Client> clientiSortati = banca.getClienti();
-    sorteazaVector(clientiSortati, [](const Client& a, const Client& b) {
-        return a.getVenit() > b.getVenit();
+
+    std::vector<const Client*> clientiPtrs;
+    clientiPtrs.reserve(totiClientii.size());
+
+    for(const auto& client : totiClientii) {
+        clientiPtrs.push_back(&client);
+    }
+
+
+    sorteazaVector(clientiPtrs, [](const Client* a, const Client* b) {
+        return a->getVenit() > b->getVenit();
     });
 
     float yPos = 350.f;
-    for(const auto& c : clientiSortati) {
+
+
+    for(const auto* c : clientiPtrs) {
         sf::RectangleShape row(sf::Vector2f(700.f, 40.f));
         row.setPosition(sf::Vector2f(50.f, yPos));
         row.setFillColor(sf::Color::White);
         window.draw(row);
 
-        std::string info = c.getNume() + " " + c.getPrenume() + " | Venit: " + std::to_string(static_cast<int>(c.getVenit()));
+
+        std::string info = c->getNume() + " " + c->getPrenume() + " | Venit: " + std::to_string(static_cast<int>(c->getVenit()));
         sf::Text txt(font, info, 16);
         txt.setFillColor(sf::Color::Black);
         txt.setPosition(sf::Vector2f(60.f, yPos + 10.f));
